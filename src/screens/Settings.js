@@ -6,13 +6,12 @@ import {
   Image,
   SafeAreaView,
 } from "react-native";
-import React from "react";
-import { auth } from "../../firebase";
+import React, { useState, useEffect } from "react";
+import { auth, db } from "../../firebase";
 import { signOut, updateEmail } from "firebase/auth";
+import { Switch } from 'react-native-switch';
 import { useNavigation } from "@react-navigation/native";
-
-
-
+import { doc, getDoc } from "firebase/firestore";
 
 const Settings = () => {
   const navigation = useNavigation();
@@ -45,11 +44,9 @@ const Settings = () => {
       });
   };
 
-  const [startCamera,setStartCamera] = React.useState(false)
+  const [startCamera, setStartCamera] = React.useState(false);
 
-  const __startCamera = ()=>{
-
-  }
+  const __startCamera = () => {};
 
   // const [cameraRollPer, setCameraRollPer] = useState(null);
   // const [disableButton, setDisableButton] = useState(false);
@@ -64,18 +61,50 @@ const Settings = () => {
   //   requestPermissions();
   // }, []);
 
+  const [isEnabled, setIsEnabled] = useState(false);
+
+  const toggleSwitch = () => {
+    setIsEnabled((previousState) => !previousState);
+  };
+
+  const [data, setData] = useState("");
+  const [email, setEmail] = useState("");
+  const user = auth.currentUser;
+
+  useEffect(() => {
+    if (user) {
+      setEmail(user.email);
+    } else {
+      console.log("No user signed in");
+    }
+
+    const fetchData = async () => {
+      const docRef = doc(db, "User-Data", user.email);
+      try {
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          setData(data);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Settings</Text>
+      <Image
+        source={require("../assets/india-gate.png")}
+        style={styles.image}
+        resizeMode="contain"
+      />
+      <Text style={styles.nameTitle}>{data.firstname}</Text>
+
       <View>
-        <View style={styles.row}>
-          <View style={styles.settingLeft}>
-            <Text style={styles.textTitle}>Name</Text>
-          </View>
-          <View style={styles.settingRight}>
-            <Text style={styles.text}>Aryaman</Text>
-          </View>
-        </View>
         <View style={styles.row}>
           {/* <Text style={styles.settingLeft}>{auth.currentUser?.name}</Text> */}
           <View style={styles.settingLeft}>
@@ -91,28 +120,22 @@ const Settings = () => {
           </View>
           <View style={styles.settingRight}>
             <TouchableOpacity onPress={changePassword}>
-              <Text style={[styles.forgot, styles.text]}>
-                Change Password
-              </Text>
+              <Text style={[styles.text, styles.forgot]}>Change Password</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={styles.row}>
+          <View style={styles.settingLeft}>
+            <Text style={styles.textTitle}>Notifications</Text>
+          </View>
+          <View style={styles.settingRight}>
+            <TouchableOpacity onPress={changePassword}>
+              <Text style={styles.text}><Switch value={isEnabled} onValueChange={toggleSwitch} /></Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
-      {/* <View style={styles.buttonContainer}>
-            {cameraRollPer ? (
-              <TouchableOpacity
-                title="Pick From Gallery"
-                disabled={disableButton}
-                style={styles.button}
-                onPress={console.log("permission granted")}
-              >
-                <Text style={styles.buttonText}>Grant Permission</Text>
-              </TouchableOpacity>
-            ) : (
-              <Text>Camera Roll Permission Required ! </Text>
-            )}
-      </View> */}
-      
+
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           onPress={handleSignOut}
@@ -128,85 +151,47 @@ const Settings = () => {
 export default Settings;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    backgroundColor: "white",
-    justifyContent:"center",
-  },
   row: {
     flexDirection: "row",
     flexWrap: "wrap",
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop:20,
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 20,
   },
   text: {
-    fontSize:17,
-    color:"#7a7a7a",
+    fontSize: 17,
+    color: "#7a7a7a",
   },
   textTitle: {
-    color:"#1c1c1c",
-    fontSize:17,
+    color: "#fff",
+    fontSize: 17,
   },
-  title: {
-    fontSize: 40,
-    fontWeight: 700,
-    marginTop: 40,
+  nameTitle: {
+    fontSize: 30,
+    color: "#efefef",
+    marginTop: 10,
     marginBottom:30,
+    textTransform: "capitalize",
   },
   settingRight: {
     alignItems: "flex-end",
-    paddingLeft:20,
+    paddingLeft: 20,
   },
   settingLeft: {
     alignItems: "flex-start",
-    paddingRight:20,
-  },
-  buttonContainer: {
-    width: "55%",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 60,
-  },
-  forgot: {
-    textDecorationLine:"underline"
-  },
-  button: {
-    backgroundColor: "#C0C0C0",
-    width: "100%",
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 5,
-  },
-  buttonOutline: {
-    backgroundColor: "#1c1c1c",
-    marginTop: 5,
-    // borderColor:"#1c1c1c",
-    // borderWidth:2,
-  },
-  buttonText: {
-    color: "#1c1c1c",
-    // fontWeight:"700",
-    fontSize: 16,
-    textAlign: "center",
-  },
-  buttonOutlineText: {
-    color: "white",
-    // fontWeight:"700",
-    fontSize: 16,
-    textAlign: "center",
+    paddingRight: 20,
   },
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    paddingHorizontal: 40,
     backgroundColor: "#000",
+    alignItems: "center",
   },
   title: {
     fontSize: 40,
     fontWeight: 700,
     color: "#F8F8F8",
+    marginTop: 80,
   },
   inputContainer: {
     width: "80%",
@@ -223,9 +208,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   forgot: {
-    fontStyle: "italic",
     paddingLeft: 20,
-    paddingTop: 10,
     textAlign: "left",
     color: "#00ADB5",
   },
@@ -289,5 +272,11 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     borderColor: "#B0B0B0",
     color: "#fff",
+  },
+  image: {
+    height: 100,
+    aspectRatio: 1,
+    borderRadius: 40,
+    marginTop: 20,
   },
 });
