@@ -31,9 +31,13 @@ const Home = () => {
     "Eiffel Tower",
     "Taj Mahal",
   ]);
-
+  const [preserve, setPreserve] = useState([
+    "Preserve the Monuments",
+    "Environment",
+    "Places to Visit",
+  ]);
+  const [plan, setPlan] = useState(["Delhi Plan", "Paris Plan", "SF Plan"]);
   const navigation = useNavigation();
-
 
   useEffect(() => {
     if (user) {
@@ -64,17 +68,21 @@ const Home = () => {
     setSearchTerm(text);
   };
 
+  const handlePlan = (element) => {
+    navigation.navigate("Plan", { element });
+  };
+
   const handlePage = (element) => {
-      navigation.navigate("Monument", { element });
+    navigation.navigate("Monument", { element });
   };
 
   const handleGuide = (element) => {
     navigation.navigate("Guide", { element });
-};
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView >
+      <ScrollView>
         <Text style={styles.title}>
           Hi, {"\n"}
           <Text style={{ textTransform: "capitalize" }}>{firstName} </Text>
@@ -102,7 +110,11 @@ const Home = () => {
           style={styles.herocards}
         >
           {data.map((element, key) => (
-            <TouchableOpacity style={styles.card} key={key} onPress={() => handleGuide(element)}>
+            <TouchableOpacity
+              style={styles.card}
+              key={key}
+              onPress={() => handleGuide(element)}
+            >
               <Text style={styles.cardTitle}>{element}</Text>
             </TouchableOpacity>
           ))}
@@ -116,7 +128,11 @@ const Home = () => {
           flex={2}
         >
           {monument.map((element, key) => (
-            <TouchableOpacity style={styles.secondarycard} key={key} onPress={() => handlePage(element)}>
+            <TouchableOpacity
+              style={styles.secondarycard}
+              key={key}
+              onPress={() => handlePage(element)}
+            >
               <Image
                 source={require("../assets/india-gate.png")}
                 style={styles.image}
@@ -126,6 +142,9 @@ const Home = () => {
             </TouchableOpacity>
           ))}
         </ScrollView>
+
+        <Text style={styles.subTitle}>Your Travel Plans</Text>
+
         <ScrollView
           horizontal
           // decelerationRate={0}
@@ -133,9 +152,29 @@ const Home = () => {
           snapToAlignment={"center"}
           style={styles.tertiarycards}
         >
-          {data.map((element, key) => (
-            <View style={styles.tertiarycard} key={key}>
+          {plan.map((element, key) => (
+            <TouchableOpacity
+              style={styles.tertiarycard}
+              key={key}
+              onPress={() => handlePlan(element)}
+            >
               <Text style={styles.tertiarycardTitle}>{element}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
+        <Text style={styles.subTitle}>#SaveTheMonuments</Text>
+
+        <ScrollView
+          horizontal
+          // decelerationRate={0}
+          // snapToInterval={100}
+          snapToAlignment={"center"}
+          style={styles.quaternarycards}
+        >
+          {preserve.map((element, key) => (
+            <View style={styles.quaternarycard} key={key}>
+              <Text style={styles.quaternarycardTitle}>{element}</Text>
             </View>
           ))}
         </ScrollView>
@@ -151,7 +190,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#000",
     padding: 30,
-    paddingBottom:10,
+    paddingBottom: 10,
     paddingTop: 60,
   },
   title: {
@@ -196,12 +235,12 @@ const styles = StyleSheet.create({
     fontWeight: 400,
     fontSize: 20,
   },
-  subTitle:{
+  subTitle: {
     color: "#00ADB5",
     fontWeight: 400,
     fontSize: 22,
-    marginTop:28,
-    paddingLeft:3,
+    marginTop: 28,
+    paddingLeft: 3,
   },
   secondarycards: {
     marginTop: 18,
@@ -228,12 +267,12 @@ const styles = StyleSheet.create({
   },
   image: {
     height: 65,
-    aspectRatio:1,
+    aspectRatio: 1,
     alignSelf: "center",
   },
   tertiarycards: {
     marginBottom: 10,
-    marginTop:20,
+    marginTop: 20,
     flex: 1,
   },
   tertiarycard: {
@@ -242,10 +281,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 20,
     height: 175,
-    width: 300,
+    width: 175,
     marginRight: 12,
   },
   tertiarycardTitle: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: 400,
+    fontSize: 20,
+  },
+  quaternarycards: {
+    marginBottom: 10,
+    marginTop: 10,
+    flex: 1,
+  },
+  quaternarycard: {
+    backgroundColor: "#1c1c1c",
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    height: 175,
+    width: 300,
+    marginRight: 12,
+  },
+  quaternarycardTitle: {
     color: "#fff",
     textAlign: "center",
     fontWeight: 400,

@@ -14,6 +14,9 @@ import Explore from "./src/screens/Explore";
 import Settings from "./src/screens/Settings";
 import Monument from "./src/screens/Monument";
 import Guide from "./src/screens/Guide";
+import Trip from "./src/screens/Trip";
+import Plan from "./src/screens/Plan";
+import City from "./src/screens/City";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -116,6 +119,21 @@ export default function App() {
           options={{ headerShown: false }}
           name="Guide"
           component={Guide}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="Trip"
+          component={Trip}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="Plan"
+          component={Plan}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="City"
+          component={City}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -9,7 +9,7 @@ import {
 import React, { useState, useEffect } from "react";
 import { auth, db } from "../../firebase";
 import { signOut, updateEmail } from "firebase/auth";
-import { Switch } from 'react-native-switch';
+import { Switch } from "react-native-switch";
 import { useNavigation } from "@react-navigation/native";
 import { doc, getDoc } from "firebase/firestore";
 
@@ -94,16 +94,21 @@ const Settings = () => {
     fetchData();
   }, [user]);
 
+  const handlePast = (element) => {
+    navigation.navigate("Trip", { element });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Settings</Text>
-      <Image
-        source={require("../assets/india-gate.png")}
-        style={styles.image}
-        resizeMode="contain"
-      />
-      <Text style={styles.nameTitle}>{data.firstname}</Text>
-
+      <View style={styles.header}>
+        <Text style={styles.title}>Settings</Text>
+        <Image
+          source={require("../assets/india-gate.png")}
+          style={styles.image}
+          resizeMode="contain"
+        />
+        <Text style={styles.nameTitle}>{data.firstname}</Text>
+      </View>
       <View>
         <View style={styles.row}>
           {/* <Text style={styles.settingLeft}>{auth.currentUser?.name}</Text> */}
@@ -130,10 +135,22 @@ const Settings = () => {
           </View>
           <View style={styles.settingRight}>
             <TouchableOpacity onPress={changePassword}>
-              <Text style={styles.text}><Switch value={isEnabled} onValueChange={toggleSwitch} /></Text>
+              <Text style={styles.text}>
+                <Switch value={isEnabled} onValueChange={toggleSwitch} />
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
+      </View>
+      <View>
+        <Text style={styles.subTitle}>Past Visits</Text>
+        <TouchableOpacity
+          style={styles.card}
+          // key={key}
+          onPress={() => handlePast()}
+        >
+          <Text style={styles.cardTitle}>Hello</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.buttonContainer}>
@@ -170,7 +187,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: "#efefef",
     marginTop: 10,
-    marginBottom:30,
+    marginBottom: 30,
     textTransform: "capitalize",
   },
   settingRight: {
@@ -185,6 +202,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 40,
     backgroundColor: "#000",
+    // alignItems: "center",
+  },
+  header: {
     alignItems: "center",
   },
   title: {
@@ -207,6 +227,15 @@ const styles = StyleSheet.create({
     borderColor: "#",
     borderWidth: 1,
   },
+  subTitle: {
+    color: "#00ADB5",
+    fontWeight: 400,
+    fontSize: 22,
+    marginTop: 28,
+    paddingLeft: 3,
+    paddingBottom: 10,
+    textAlign: "left",
+  },
   forgot: {
     paddingLeft: 20,
     textAlign: "left",
@@ -215,6 +244,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: "80%",
     justifyContent: "center",
+    // alignContent:"center",
     alignItems: "center",
     marginTop: 40,
   },
@@ -224,6 +254,21 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 30,
     color: "#111",
+  },
+  card: {
+    backgroundColor: "#1c1c1c",
+    paddingVertical: 20,
+    // paddingHorizontal: 10,
+    borderRadius: 20,
+    height: 175,
+    width: "100%",
+    marginRight: 12,
+  },
+  cardTitle: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "400",
+    fontSize: 20,
   },
   buttonOutline: {
     backgroundColor: "#fff",

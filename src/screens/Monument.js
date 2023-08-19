@@ -16,11 +16,34 @@ import Icon from "react-native-vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
+import CircleGroup from "../components/CircleGroup";
 
 const Monument = ({ route }) => {
   const { element } = route.params;
   const navigation = useNavigation();
   const [data, setData] = useState("");
+  const [detail, setDetail] = useState([
+    "Timing",
+    "Contact No.",
+    "Wheelchair",
+    "Location",
+    "City",
+    "Pincode",
+    "Metro Station",
+    "Entry",
+    "Days Closed",
+    "Photography Cost",
+  ]);
+  // "Timing": "9:00AM - 5:00PM",
+  // "Contact No.": "91-11-23365358",
+  // "Wheelchair": "Yes",
+  // "Location":"Near Rajpath",
+  // "City":"New Delhi",
+  // "Pincode":"110001",
+  // "Metro Station":"Pragati Madan",
+  // "Entry":"Free",
+  // "Days Closed":"None",
+  // "Photography Cost":"None"
 
   const [image, setImage] = useState([
     "Explore New Monument",
@@ -167,26 +190,69 @@ const Monument = ({ route }) => {
             </TouchableOpacity>
           ))}
         </ScrollView>
-        <View>
-          <Text>Review</Text>
-          <View style={styles.card}>
-              <View style={styles.column}>
-                <Text style={styles.cardTitle}>Date</Text>
-                <Text style={styles.cardcontent}>{data.date}</Text>
-                <Text style={styles.cardTitle}>Height</Text>
-                <Text style={styles.cardcontent}>{data.height}m</Text>
-                <Text style={styles.cardTitle}>Designer</Text>
-                <Text style={styles.cardcontent}>{data.designer}</Text>
+        <View style={{marginBottom:20}}>
+          <Text style={styles.heading}>Review</Text>
+          <Image
+            source={require("../assets/review-glass.png")}
+            style={styles.reviewglass}
+            resizeMode="contain"
+          />
+          <Image
+            source={require("../assets/review-glass.png")}
+            style={styles.reviewglass}
+            resizeMode="contain"
+          />
+          <View style={styles.reviewrow}>
+            <Text style={styles.seemore2}>Write a review</Text>
+            <View>
+              <TouchableOpacity
+                onPress={handleWiki}
+                style={styles.seemorebutton}
+              >
+                <Text style={styles.seemore}>
+                  See More{" "}
+                  <Icon
+                    name="chevron-down"
+                    size={15}
+                    color={"#00ADB5"}
+                    style={styles.seemoreicon}
+                  />
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+        <View style={{marginBottom:30}}>
+          <Text style={styles.heading}>Details</Text>
+          {detail.map((item, index) => (
+            <View style={styles.row} key={index}>
+              <View style={styles.settingLeft}>
+                <Text style={styles.textTitle}>{item}</Text>
               </View>
-              <View style={styles.column}>
-                <Text style={styles.cardTitle}>Origin</Text>
-                <Text style={styles.cardcontent}>{data.origin}</Text>
-                <Text style={styles.cardTitle}>Width</Text>
-                <Text style={styles.cardcontent}>{data.width}m</Text>
-                <Text style={styles.cardTitle}>Area</Text>
-                <Text style={styles.cardcontent}>{data.area}acre</Text>
+              <View style={styles.settingRight}>
+                <Text style={styles.text}>
+                  {data[item.toLowerCase().replace(/\s/g, "")]}
+                </Text>
               </View>
             </View>
+          ))}
+        </View>
+        <View style={{marginBottom:20}}>
+          <Text style={styles.heading}>Tickets</Text>
+          <Image
+              source={require("../assets/ticket-glass.png")}
+              style={styles.ticketglass}
+              resizeMode="contain"
+            />
+            <Text style={styles.ticketText}>This place doesn’t require any tickets</Text>
+        </View>
+        <View>
+          <Text style={styles.heading}>Inside Map</Text>
+          <Image
+              source={require("../assets/review-glass.png")}
+              style={styles.reviewglass}
+              resizeMode="contain"
+            />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -290,14 +356,20 @@ const styles = StyleSheet.create({
     fontSize: 21,
   },
   content: {
-    paddingBottom: 10,
+    paddingBottom: 8,
     color: "#838383",
-    fontSize: 18,
+    fontSize: 17,
     textAlign: "justify",
   },
   seemore: {
     color: "#00ADB5",
     textAlign: "right",
+    marginBottom: 15,
+  },
+  seemore2: {
+    color: "#00ADB5",
+    textAlign: "left",
+    marginBottom: 15,
   },
   seemorebutton: {
     textAlign: "center",
@@ -307,7 +379,7 @@ const styles = StyleSheet.create({
     top: 3,
   },
   tertiarycards: {
-    marginTop: 20,
+    marginTop: 10,
     flex: 1,
   },
   tertiarycard: {
@@ -315,8 +387,74 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 10,
     borderRadius: 20,
-    height: 150,
-    width: 200,
+    height: 100,
+    width: 150,
     marginRight: 12,
   },
+  heading: {
+    color: "#fff",
+    fontSize: 25,
+    fontWeight: "700",
+    marginTop: 10,
+  },
+  reviewglass: {
+    height: 155,
+    // aspectRatio: 1,
+    alignSelf: "center",
+    opacity: 0.95,
+    marginVertical: 10,
+  },
+  reviewrow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  details: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  row: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 20,
+  },
+  text: {
+    fontSize: 17,
+    color: "#7a7a7a",
+  },
+  textTitle: {
+    color: "#fff",
+    fontSize: 17,
+  },
+  nameTitle: {
+    fontSize: 30,
+    color: "#efefef",
+    marginTop: 10,
+    marginBottom: 30,
+    textTransform: "capitalize",
+  },
+  settingRight: {
+    alignItems: "flex-end",
+    paddingLeft: 20,
+  },
+  settingLeft: {
+    alignItems: "flex-start",
+    paddingRight: 20,
+  },
+  ticketglass: {
+    height: 54,
+    // aspectRatio: 1,
+    alignSelf: "center",
+    opacity: 0.95,
+    top:15,
+  },
+  ticketText: {
+    color: "#fff",
+    textAlign: "center",
+    fontSize: 15,
+    top:-23,
+  }
 });
