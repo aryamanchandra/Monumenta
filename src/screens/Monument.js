@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import Icons from "react-native-vector-icons/FontAwesome5";
+import HeartIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Icon from "react-native-vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
 import { doc, getDoc } from "firebase/firestore";
@@ -51,13 +52,40 @@ const Monument = ({ route }) => {
     "Places to Visit",
   ]);
 
-  function handleBack() {
+  const [theme, setTheme] = useState([
+    "Mughal",
+    "Chola",
+    "British",
+    "Kolkata",
+    "Bangalore",
+    "Cochin",
+  ]);
+
+  const [news, setNews] = useState([
+    "Mughal",
+    "Chola",
+    "British",
+    "Kolkata",
+  ]);
+
+  const [tags, setTags] = useState([
+    "Mughal",
+    "Delhi",
+    "British",
+  ]);
+
+  const handleBack = ()=> {
     navigation.replace("Main");
   }
 
-  function handleWiki() {
+  const handleWiki = ()=> {
     const link = "https://en.wikipedia.org/wiki/India_Gate"; // Replace with your desired link
     Linking.openURL(link);
+  }
+
+  const [isHeartFilled, setIsHeartFilled] = useState(false);
+  const saved = ()=> {
+    setIsHeartFilled(prevState => !prevState);
   }
 
   useEffect(() => {
@@ -90,12 +118,12 @@ const Monument = ({ route }) => {
             />
           </TouchableOpacity>
           <View style={styles.rightButtons}>
-            <TouchableOpacity onPress={handleBack} style={styles.button}>
-              <Icons
-                name="heart"
-                size={25}
+            <TouchableOpacity onPress={saved} style={styles.button}>
+              <HeartIcons
+                name={isHeartFilled ? "cards-heart" : "cards-heart-outline"}
+                size={30}
                 color={"#fff"}
-                style={styles.icon}
+                style={styles.icon2}
               />
             </TouchableOpacity>
             <TouchableOpacity onPress={handleBack} style={styles.button}>
@@ -254,6 +282,49 @@ const Monument = ({ route }) => {
               resizeMode="contain"
             />
         </View>
+        <Text style={styles.heading}>Events</Text>
+        <ScrollView
+          horizontal
+          // decelerationRate={0}
+          // snapToInterval={100}
+          snapToAlignment={"center"}
+          style={styles.tertiarycards2}
+        >
+          {theme.map((element, key) => (
+            <View style={styles.tertiarycard2} key={key}>
+              <Text style={styles.tertiarycardTitle2}>{element}</Text>
+            </View>
+          ))}
+        </ScrollView>
+        <Text style={styles.heading}>News</Text>
+        <ScrollView
+          horizontal
+          // decelerationRate={0}
+          // snapToInterval={100}
+          snapToAlignment={"center"}
+          style={styles.quarternarycards2}
+        >
+          {theme.map((element, key) => (
+            <View style={styles.quarternarycard2} key={key}>
+              <Text style={styles.quarternarycardTitle2}>{element}</Text>
+            </View>
+          ))}
+        </ScrollView>
+        <Text style={styles.heading}>Tags</Text>
+        <View
+          horizontal
+          // decelerationRate={0}
+          // snapToInterval={100}
+          snapToAlignment={"center"}
+          style={styles.tags}
+        >
+          {tags.map((element, key) => (
+            <View style={styles.tagcont} key={key}>
+              <Text style={styles.tagname}>{element}</Text>
+            </View>
+          ))}
+        </View>
+
       </ScrollView>
     </SafeAreaView>
   );
@@ -306,6 +377,10 @@ const styles = StyleSheet.create({
   },
   icon1: {
     textAlign: "center",
+  },
+  icon2: {
+    textAlign: "center",
+    paddingTop:1,
   },
   image: {
     height: 300,
@@ -456,5 +531,72 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 15,
     top:-23,
-  }
+  },
+  tertiarycards2: {
+    marginBottom: 10,
+    marginTop:5,
+    flex: 1,
+  },
+  tertiarycard2: {
+    backgroundColor: "#1c1c1c",
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    height: 175,
+    width: 175,
+    marginRight: 12,
+    marginTop: 5,
+  },
+  tertiarycardTitle2: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: 400,
+    fontSize: 20,
+  },
+  quarternarycards2: {
+    marginBottom: 10,
+    marginTop:5,
+    flex: 1,
+  },
+  quarternarycard2: {
+    backgroundColor: "#1c1c1c",
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    borderRadius: 20,
+    height: 175,
+    width: 300,
+    marginRight: 12,
+    marginTop: 5,
+  },
+  quarternarycardTitle2: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: 400,
+    fontSize: 20,
+  },
+  tags: {
+    marginBottom: 10,
+    marginTop:5,
+    flex: 1,
+    flexDirection: 'row',   // Cards will be rendered in a row
+    flexWrap: 'wrap', 
+  },
+  tagcont: {
+    // backgroundColor: "#1c1c1c",
+    paddingVertical: 5,
+    paddingHorizontal: 5,
+    borderRadius: 20,
+    height: 35,
+    width: 100,
+    marginRight: 5,
+    borderColor:"#1c1c1c",
+    borderWidth:2,
+    marginBottom:5,
+  },
+  tagname: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: 400,
+    fontSize: 15,
+  },
 });

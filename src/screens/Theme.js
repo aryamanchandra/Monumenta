@@ -9,15 +9,28 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import Icon from "react-native-vector-icons/Feather";
+import HeartIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Icons from "react-native-vector-icons/FontAwesome5";
+import { useNavigation } from "@react-navigation/native";
 
 const City = ({ route }) => {
   const { element } = route.params;
+  const navigation = useNavigation();
   const [searchTerm, setSearchTerm] = useState("");
 
   const [data, setData] = useState(["Monument 1", "Monument 2", "Monument 3"]);
 
   const handleChange = (text) => {
     setSearchTerm(text);
+  };
+
+  const handleBack = () => {
+    navigation.replace("Main");
+  };
+
+  const [isHeartFilled, setIsHeartFilled] = useState(false);
+  const saved = () => {
+    setIsHeartFilled((prevState) => !prevState);
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -32,9 +45,9 @@ const City = ({ route }) => {
             />
           </TouchableOpacity>
           <View style={styles.rightButtons}>
-            <TouchableOpacity onPress={handleBack} style={styles.button}>
-              <Icons
-                name="heart"
+            <TouchableOpacity onPress={saved} style={styles.button}>
+              <HeartIcons
+                name={isHeartFilled ? "cards-heart" : "cards-heart-outline"}
                 size={25}
                 color={"#fff"}
                 style={styles.icon}
@@ -129,6 +142,17 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     color: "#fff",
+  },
+  icon: {
+    textAlign: "center",
+    padding: 3,
+  },
+  icon1: {
+    textAlign: "center",
+  },
+  icon2: {
+    textAlign: "center",
+    paddingTop:1,
   },
   buttonRow: {
     flexDirection: "row",

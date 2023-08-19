@@ -29,8 +29,16 @@ const Explore = () => {
 
   const navigation = useNavigation();
 
+  const handleGuide = (element) => {
+    navigation.navigate("City", { element });
+};
+
   const handleCity = (element) => {
     navigation.navigate("City", { element });
+};
+
+const handleTheme = (element) => {
+  navigation.navigate("Theme", { element });
 };
 
   return (
@@ -78,9 +86,9 @@ const Explore = () => {
           style={styles.tertiarycards}
         >
           {theme.map((element, key) => (
-            <View style={styles.tertiarycard} key={key}>
+            <TouchableOpacity style={styles.tertiarycard} key={key} onPress={() => handleTheme(element)}>
               <Text style={styles.tertiarycardTitle}>{element}</Text>
-            </View>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       </ScrollView>
