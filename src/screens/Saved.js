@@ -13,7 +13,7 @@ const Trip = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.header}>
-          <Text style={styles.title}>Past Trip</Text>
+          <Text style={styles.title}>Saved</Text>
           <Text style={styles.nameTitle}></Text>
         </View>
         <ScrollView

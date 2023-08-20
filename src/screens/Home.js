@@ -12,6 +12,7 @@ import React, { useState, useEffect } from "react";
 import { auth, db } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
+import Icons from "react-native-vector-icons/FontAwesome5";
 
 const Home = () => {
   const [email, setEmail] = useState("");
@@ -35,7 +36,11 @@ const Home = () => {
     "Environment",
     "Places to Visit",
   ]);
-  const [plan, setPlan] = useState(["Your Delhi Plan", "Your Paris Plan", "Your SF Plan"]);
+  const [plan, setPlan] = useState([
+    "Your Delhi Plan",
+    "Your Paris Plan",
+    "Your SF Plan",
+  ]);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -77,6 +82,10 @@ const Home = () => {
     navigation.navigate("Preserve", { element });
   };
 
+  const handleNearby = (element) => {
+    navigation.navigate("City", { element });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -101,7 +110,16 @@ const Home = () => {
             </TouchableOpacity>
           ))}
         </ScrollView>
-        <Text style={styles.subTitle}>Monuments Close to You</Text>
+        <View style={styles.header}>
+          <Text style={styles.subTitle}>Close to You</Text>
+          <TouchableOpacity style={styles.seemoreheader} onPress={() => handleNearby("Delhi")}>
+            <Text style={styles.seemore}>See More</Text>
+            <Icons
+              name="angle-right"
+              style={styles.icon1}
+            />
+          </TouchableOpacity>
+        </View>
         <ScrollView
           horizontal
           snapToAlignment={"center"}
@@ -155,7 +173,11 @@ const Home = () => {
           style={styles.quaternarycards}
         >
           {preserve.map((element, key) => (
-            <TouchableOpacity style={styles.quaternarycard} key={key}  onPress={() => handlePreserve(element)}>
+            <TouchableOpacity
+              style={styles.quaternarycard}
+              key={key}
+              onPress={() => handlePreserve(element)}
+            >
               <Text style={styles.quaternarycardTitle}>{element}</Text>
             </TouchableOpacity>
           ))}
@@ -218,16 +240,37 @@ const styles = StyleSheet.create({
     fontWeight: 400,
     fontSize: 20,
   },
+  header: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    marginTop: 28,
+  },
   subTitle: {
     color: "#00ADB5",
     fontWeight: 400,
     fontSize: 22,
-    marginTop: 28,
     paddingLeft: 3,
+  },
+  seemoreheader: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  seemore: {
+    paddingTop: 5,
+    color: "#00ADB5",
+  },
+  icon1: {
+    paddingLeft:3,
+    paddingTop: 5,
+    fontSize:20,
+    color: "#00ADB5",
   },
   secondarycards: {
     marginTop: 18,
     flex: 1,
+    marginBottom: 35,
   },
   secondarycard: {
     backgroundColor: "#000",
@@ -237,7 +280,6 @@ const styles = StyleSheet.create({
     height: 100,
     width: 100,
     marginRight: 12,
-    marginBottom: 12,
     justifyContent: "center",
     alignContent: "center",
   },
@@ -254,8 +296,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   tertiarycards: {
-    marginBottom: 10,
-    marginTop: 20,
+    marginBottom: 35,
+    marginTop: 15,
     flex: 1,
   },
   tertiarycard: {

@@ -2,7 +2,7 @@ import { ScrollView, StyleSheet, Text, View, TouchableOpacity } from "react-nati
 import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const Trip = () => {
+const Help = () => {
   const [preserve, setPreserve] = useState([
     "Preserve the Monuments",
     "Environment",
@@ -13,7 +13,7 @@ const Trip = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.header}>
-          <Text style={styles.title}>Past Trip</Text>
+          <Text style={styles.title}>Help</Text>
           <Text style={styles.nameTitle}></Text>
         </View>
         <ScrollView
@@ -37,7 +37,7 @@ const Trip = () => {
   );
 };
 
-export default Trip;
+export default Help;
 
 const styles = StyleSheet.create({
   container: {
