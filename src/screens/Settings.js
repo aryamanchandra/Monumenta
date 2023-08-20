@@ -5,6 +5,7 @@ import {
   View,
   Image,
   SafeAreaView,
+  ScrollView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { auth, db } from "../../firebase";
@@ -12,6 +13,8 @@ import { signOut, updateEmail } from "firebase/auth";
 import { Switch } from "react-native-switch";
 import { useNavigation } from "@react-navigation/native";
 import { doc, getDoc } from "firebase/firestore";
+import Icons from "react-native-vector-icons/FontAwesome5";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 const Settings = () => {
   const navigation = useNavigation();
@@ -81,58 +84,112 @@ const Settings = () => {
     navigation.navigate("Trip", { element });
   };
 
+  const handleSaved = (element) => {
+    navigation.navigate("Saved");
+  };
+
+  const handleHelp = (element) => {
+    navigation.navigate("Help");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        {/* <Text style={styles.title}>Settings</Text> */}
-        <Image
-          source={require("../assets/profile.png")}
-          style={styles.image}
-          resizeMode="contain"
-        />
-        <Text style={styles.nameTitle}>{data.firstname}</Text>
-      </View>
-      <Text style={styles.subTitle}>User Profile</Text>
-      <View>
-        <View style={styles.row}>
-          {/* <Text style={styles.settingLeft}>{auth.currentUser?.name}</Text> */}
-          <View style={styles.settingLeft}>
-            <Text style={styles.textTitle}>Email</Text>
+      <ScrollView>
+        <View style={styles.header}>
+          {/* <Text style={styles.title}>Settings</Text> */}
+          <Image
+            source={require("../assets/profile.png")}
+            style={styles.image}
+            resizeMode="contain"
+          />
+          <Text style={styles.nameTitle}>{data.firstname}</Text>
+        </View>
+        <Text style={styles.subTitle}>User Profile</Text>
+        <View>
+          <View style={styles.row}>
+            {/* <Text style={styles.settingLeft}>{auth.currentUser?.name}</Text> */}
+            <View style={styles.settingLeft}>
+              <Text style={styles.textTitle}>Email</Text>
+            </View>
+            <View style={styles.settingRight}>
+              <Text style={styles.text}>{auth.currentUser?.email}</Text>
+            </View>
           </View>
-          <View style={styles.settingRight}>
-            <Text style={styles.text}>{auth.currentUser?.email}</Text>
+          <View style={styles.row}>
+            <View style={styles.settingLeft}>
+              <Text style={styles.textTitle}>Password</Text>
+            </View>
+            <View style={styles.settingRight}>
+              <TouchableOpacity onPress={changePassword}>
+                <Text style={[styles.text, styles.forgot]}>
+                  Change Password
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.row}>
+            {/* <Text style={styles.settingLeft}>{auth.currentUser?.name}</Text> */}
+            <View style={styles.settingLeft}>
+              <Text style={styles.textTitle}>Location</Text>
+            </View>
+            <View style={styles.settingRight}>
+              <Text style={styles.text}>Delhi</Text>
+            </View>
           </View>
         </View>
-        <View style={styles.row}>
-          <View style={styles.settingLeft}>
-            <Text style={styles.textTitle}>Password</Text>
-          </View>
-          <View style={styles.settingRight}>
-            <TouchableOpacity onPress={changePassword}>
-              <Text style={[styles.text, styles.forgot]}>Change Password</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-      <View>
-        <Text style={styles.subTitle}>Past Visits</Text>
-        <TouchableOpacity
-          style={styles.card}
-          // key={key}
-          onPress={() => handlePast()}
-        >
-          <Text style={styles.cardTitle}>Hello</Text>
-        </TouchableOpacity>
-      </View>
 
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          onPress={handleSignOut}
-          style={[styles.button, styles.buttonOutline]}
-        >
-          <Text style={styles.buttonOutlineText}>Sign Out</Text>
-        </TouchableOpacity>
-      </View>
+        {/* <Text style={styles.subTitle}>Activity</Text> */}
+        <View style={styles.activity}>
+          <TouchableOpacity
+            style={styles.card}
+            // key={key}
+            onPress={() => handlePast()}
+          >
+            <MaterialCommunityIcons
+              name="map-outline"
+              size={25}
+              color={"#c9c9c9"}
+              style={styles.icon1}
+            />
+            <Text style={styles.cardTitle}>Past Trips</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.card}
+            // key={key}
+            onPress={() => handleSaved()}
+          >
+            <MaterialCommunityIcons
+              name="heart-outline"
+              size={25}
+              color={"#c9c9c9"}
+              style={styles.icon1}
+            />
+            <Text style={styles.cardTitle}>Saved</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.card}
+            // key={key}
+            onPress={() => handleHelp()}
+          >
+            <MaterialCommunityIcons
+              name="help-circle-outline"
+              size={25}
+              color={"#c9c9c9"}
+              style={styles.icon1}
+            />
+            <Text style={styles.cardTitle}>Help</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            onPress={handleSignOut}
+            style={[styles.button, styles.buttonOutline]}
+          >
+            <Text style={styles.buttonOutlineText}>Sign Out</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -145,15 +202,15 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 20,
+    marginBottom: 10,
+    marginTop: 10,
     paddingHorizontal: 5,
   },
   text: {
-    fontSize: 17,
-    color: "#7a7a7a",
+    color: "#828282",
   },
   textTitle: {
-    color: "#fff",
+    color: "#828282",
     fontSize: 17,
   },
   nameTitle: {
@@ -173,7 +230,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: 40,
+    paddingHorizontal: 30,
     backgroundColor: "#000",
     // alignItems: "center",
   },
@@ -205,9 +262,9 @@ const styles = StyleSheet.create({
     color: "#00ADB5",
     fontWeight: 400,
     fontSize: 22,
-    marginTop: 28,
+    marginTop: 25,
     paddingLeft: 3,
-    paddingBottom: 15,
+    paddingBottom: 5,
     textAlign: "left",
   },
   forgot: {
@@ -216,32 +273,42 @@ const styles = StyleSheet.create({
     color: "#00ADB5",
   },
   buttonContainer: {
-    flex:1,
+    flex: 1,
     width: "100%",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 40,
   },
   button: {
     backgroundColor: "#fff",
-    width: "80%",
+    width: "60%",
     paddingVertical: 15,
     borderRadius: 30,
     color: "#111",
+  },
+  activity: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    marginTop: 15,
   },
   card: {
     backgroundColor: "#1c1c1c",
     paddingVertical: 20,
     // paddingHorizontal: 10,
     borderRadius: 20,
-    height: 175,
-    width: "100%",
-    marginRight: 12,
+    height: 100,
+    width: "31%",
+    // marginRight: 12,
+    marginBottom: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
   cardTitle: {
-    color: "#fff",
+    color: "#c9c9c9",
     textAlign: "center",
     fontWeight: "400",
-    fontSize: 20,
+    fontSize: 15,
   },
   buttonOutline: {
     backgroundColor: "#fff",
@@ -260,9 +327,6 @@ const styles = StyleSheet.create({
     // fontWeight:"700",
     fontSize: 16,
     textAlign: "center",
-  },
-  text: {
-    color: "#E2E2E2",
   },
   inputcontainer: {
     height: 65,
@@ -296,5 +360,8 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     borderRadius: 60,
     marginTop: 20,
+  },
+  icon1: {
+    paddingBottom: 7,
   },
 });

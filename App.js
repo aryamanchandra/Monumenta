@@ -21,6 +21,8 @@ import Theme from "./src/screens/Theme";
 import Filter from "./src/screens/Filter";
 import Add from "./src/screens/Add";
 import Preserve from "./src/screens/Preserve";
+import Saved from "./src/screens/Saved"
+import Help from "./src/screens/Help"
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -158,6 +160,16 @@ export default function App() {
           options={{ headerShown: false }}
           name="Preserve"
           component={Preserve}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="Saved"
+          component={Saved}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="Help"
+          component={Help}
         />
       </Stack.Navigator>
     </NavigationContainer>
