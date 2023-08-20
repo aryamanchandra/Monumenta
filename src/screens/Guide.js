@@ -20,7 +20,7 @@ const City = ({ route }) => {
   const [data, setData] = useState(["Monument 1", "Monument 2", "Monument 3"]);
 
   const handleBack = () => {
-    navigation.replace("Main");
+    navigation.goBack();
   };
 
   const [isHeartFilled, setIsHeartFilled] = useState(false);
@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     color: "#00ADB5",
     marginTop: 15,
     textAlign: "center",
+    marginBottom:15,
   },
   subtitle: {
     color: "#00ADB5",

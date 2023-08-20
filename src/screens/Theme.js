@@ -25,7 +25,7 @@ const Theme = ({ route }) => {
   };
 
   const handleBack = () => {
-    navigation.replace("Main");
+    navigation.goBack();
   };
 
   const [isHeartFilled, setIsHeartFilled] = useState(false);

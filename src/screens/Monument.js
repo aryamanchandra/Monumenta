@@ -75,7 +75,7 @@ const Monument = ({ route }) => {
   ]);
 
   const handleBack = ()=> {
-    navigation.replace("Main");
+    navigation.goBack();
   }
 
   const handleWiki = ()=> {

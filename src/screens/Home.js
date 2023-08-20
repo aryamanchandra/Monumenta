@@ -73,6 +73,10 @@ const Home = () => {
     navigation.navigate("Guide", { element });
   };
 
+  const handlePreserve = (element) => {
+    navigation.navigate("Preserve", { element });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -151,9 +155,9 @@ const Home = () => {
           style={styles.quaternarycards}
         >
           {preserve.map((element, key) => (
-            <View style={styles.quaternarycard} key={key}>
+            <TouchableOpacity style={styles.quaternarycard} key={key}  onPress={() => handlePreserve(element)}>
               <Text style={styles.quaternarycardTitle}>{element}</Text>
-            </View>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       </ScrollView>

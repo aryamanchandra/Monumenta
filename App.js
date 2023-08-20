@@ -20,6 +20,7 @@ import City from "./src/screens/City";
 import Theme from "./src/screens/Theme";
 import Filter from "./src/screens/Filter";
 import Add from "./src/screens/Add";
+import Preserve from "./src/screens/Preserve";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -152,6 +153,11 @@ export default function App() {
           options={{ headerShown: false }}
           name="Add"
           component={Add}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="Preserve"
+          component={Preserve}
         />
       </Stack.Navigator>
     </NavigationContainer>

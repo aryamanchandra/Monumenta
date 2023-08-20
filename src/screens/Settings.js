@@ -44,23 +44,6 @@ const Settings = () => {
       });
   };
 
-  const [startCamera, setStartCamera] = React.useState(false);
-
-  const __startCamera = () => {};
-
-  // const [cameraRollPer, setCameraRollPer] = useState(null);
-  // const [disableButton, setDisableButton] = useState(false);
-
-  // useEffect(() => {
-  //   const requestPermissions = async () => {
-  //     const { status } =
-  //       await ImagePicker.requestMediaLibraryPermissionsAsync();
-  //     setCameraRollPer(status === "granted");
-  //     setDisableButton(false);
-  //   };
-  //   requestPermissions();
-  // }, []);
-
   const [isEnabled, setIsEnabled] = useState(false);
 
   const toggleSwitch = () => {
@@ -101,14 +84,15 @@ const Settings = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Settings</Text>
+        {/* <Text style={styles.title}>Settings</Text> */}
         <Image
-          source={require("../assets/india-gate.png")}
+          source={require("../assets/profile.png")}
           style={styles.image}
           resizeMode="contain"
         />
         <Text style={styles.nameTitle}>{data.firstname}</Text>
       </View>
+      <Text style={styles.subTitle}>User Profile</Text>
       <View>
         <View style={styles.row}>
           {/* <Text style={styles.settingLeft}>{auth.currentUser?.name}</Text> */}
@@ -126,18 +110,6 @@ const Settings = () => {
           <View style={styles.settingRight}>
             <TouchableOpacity onPress={changePassword}>
               <Text style={[styles.text, styles.forgot]}>Change Password</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.row}>
-          <View style={styles.settingLeft}>
-            <Text style={styles.textTitle}>Notifications</Text>
-          </View>
-          <View style={styles.settingRight}>
-            <TouchableOpacity onPress={changePassword}>
-              <Text style={styles.text}>
-                <Switch value={isEnabled} onValueChange={toggleSwitch} />
-              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -173,7 +145,8 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     alignItems: "center",
     justifyContent: "space-between",
-    marginTop: 20,
+    marginBottom: 20,
+    paddingHorizontal: 5,
   },
   text: {
     fontSize: 17,
@@ -187,7 +160,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     color: "#efefef",
     marginTop: 10,
-    marginBottom: 30,
+    // marginBottom: 30,
     textTransform: "capitalize",
   },
   settingRight: {
@@ -206,6 +179,7 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: "center",
+    marginTop: 80,
   },
   title: {
     fontSize: 40,
@@ -233,7 +207,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     marginTop: 28,
     paddingLeft: 3,
-    paddingBottom: 10,
+    paddingBottom: 15,
     textAlign: "left",
   },
   forgot: {
@@ -242,15 +216,14 @@ const styles = StyleSheet.create({
     color: "#00ADB5",
   },
   buttonContainer: {
-    width: "80%",
+    flex:1,
+    width: "100%",
     justifyContent: "center",
-    // alignContent:"center",
     alignItems: "center",
-    marginTop: 40,
   },
   button: {
     backgroundColor: "#fff",
-    width: "100%",
+    width: "80%",
     paddingVertical: 15,
     borderRadius: 30,
     color: "#111",
@@ -321,7 +294,7 @@ const styles = StyleSheet.create({
   image: {
     height: 100,
     aspectRatio: 1,
-    borderRadius: 40,
+    borderRadius: 60,
     marginTop: 20,
   },
 });
