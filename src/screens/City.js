@@ -9,9 +9,13 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import Icon from "react-native-vector-icons/Feather";
+import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Icons from "react-native-vector-icons/FontAwesome5";
+import { useNavigation } from "@react-navigation/native";
 
 const City = ({ route }) => {
   const { element } = route.params;
+  const navigation = useNavigation();
   const [searchTerm, setSearchTerm] = useState("");
 
   const [data, setData] = useState(["Monument 1", "Monument 2", "Monument 3"]);
@@ -19,6 +23,31 @@ const City = ({ route }) => {
   const handleChange = (text) => {
     setSearchTerm(text);
   };
+
+  const handleBack = () => {
+    navigation.replace("Main");
+  };
+
+  const [isHeartFilled, setIsHeartFilled] = useState(false);
+  const saved = () => {
+    setIsHeartFilled((prevState) => !prevState);
+  };
+
+  const [isFilterFilled, setIsFilterFilled] = useState(false);
+  const filtered = () => {
+    setIsFilterFilled((prevState) => !prevState);
+    navigation.navigate("Filter");
+  };
+
+  // const [tags, setTags] = useState(["Type", "Ratings", "Entry", "Neighbourhood", "Ratings", "Entry"]);
+  const [tags, setTags] = useState([
+    "Nearby",
+    "4+ Rating",
+    "Free Entry",
+    "Nearby",
+    "Nearby",
+  ]);
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -32,9 +61,17 @@ const City = ({ route }) => {
             />
           </TouchableOpacity>
           <View style={styles.rightButtons}>
-            <TouchableOpacity onPress={handleBack} style={styles.button}>
-              <Icons
-                name="heart"
+            <TouchableOpacity onPress={filtered} style={styles.button}>
+              <MaterialIcons
+                name={isFilterFilled ? "filter" : "filter-outline"}
+                size={25}
+                color={"#fff"}
+                style={styles.icon}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={saved} style={styles.button}>
+              <MaterialIcons
+                name={isHeartFilled ? "cards-heart" : "cards-heart-outline"}
                 size={25}
                 color={"#fff"}
                 style={styles.icon}
@@ -66,6 +103,20 @@ const City = ({ route }) => {
             style={styles.textInput}
           />
         </View>
+
+        <ScrollView
+          horizontal
+          // decelerationRate={0}
+          // snapToInterval={100}
+          snapToAlignment={"center"}
+          style={styles.tags}
+        >
+          {tags.map((element, key) => (
+            <View style={styles.tagcont} key={key}>
+              <Text style={styles.tagname}>{element}</Text>
+            </View>
+          ))}
+        </ScrollView>
         <ScrollView
           //   horizontal
           // decelerationRate={0}
@@ -115,7 +166,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 5,
     marginTop: 20,
     borderColor: "#3c3c3c",
     borderWidth: 2,
@@ -129,6 +180,42 @@ const styles = StyleSheet.create({
   textInput: {
     flex: 1,
     color: "#fff",
+  },
+  icon: {
+    textAlign: "center",
+    padding: 3,
+  },
+  icon1: {
+    textAlign: "center",
+  },
+  icon2: {
+    textAlign: "center",
+    paddingTop: 1,
+  },
+  tags: {
+    marginBottom: 10,
+    marginTop: 5,
+    flex: 1,
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  tagcont: {
+    // backgroundColor: "#1c1c1c",
+    paddingVertical: 5,
+    paddingHorizontal: 5,
+    borderRadius: 20,
+    height: 35,
+    width: 100,
+    marginRight: 5,
+    borderColor: "#1c1c1c",
+    borderWidth: 2,
+    marginBottom: 5,
+  },
+  tagname: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: 400,
+    fontSize: 15,
   },
   buttonRow: {
     flexDirection: "row",

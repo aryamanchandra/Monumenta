@@ -1,12 +1,22 @@
-import { StyleSheet, Text, View, SafeAreaView, ScrollView, Image, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  TextInput,
+} from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/Feather";
 
 const Explore = () => {
   const [data, setData] = useState([
-    "Explore New Monument",
-    "Local Guide",
-    "Places to Visit",
+    "Places in the World",
+    "South India Tour",
+    "Indian Temples",
   ]);
 
   const [monument, setMonument] = useState([
@@ -29,22 +39,43 @@ const Explore = () => {
 
   const navigation = useNavigation();
 
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const handleChange = (text) => {
+    setSearchTerm(text);
+  };
+
   const handleGuide = (element) => {
     navigation.navigate("City", { element });
-};
+  };
 
   const handleCity = (element) => {
     navigation.navigate("City", { element });
-};
+  };
 
-const handleTheme = (element) => {
-  navigation.navigate("Theme", { element });
-};
+  const handleTheme = (element) => {
+    navigation.navigate("Theme", { element });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Explore</Text>
-      <ScrollView >
+      <View style={styles.inputContainer}>
+        <Icon
+          name="search"
+          size={20}
+          color="#828282"
+          style={styles.searchIcon}
+        />
+        <TextInput
+          placeholder="Search..."
+          placeholderTextColor="#4E4E4E"
+          value={searchTerm}
+          onChangeText={handleChange}
+          style={styles.textInput}
+        />
+      </View>
+      <ScrollView>
         <ScrollView
           horizontal
           // decelerationRate={0}
@@ -53,7 +84,11 @@ const handleTheme = (element) => {
           style={styles.herocards}
         >
           {data.map((element, key) => (
-            <TouchableOpacity style={styles.card} key={key} onPress={() => handleGuide(element)}>
+            <TouchableOpacity
+              style={styles.card}
+              key={key}
+              onPress={() => handleGuide(element)}
+            >
               <Text style={styles.cardTitle}>{element}</Text>
             </TouchableOpacity>
           ))}
@@ -67,7 +102,11 @@ const handleTheme = (element) => {
           flex={2}
         >
           {monument.map((element, key) => (
-            <TouchableOpacity style={styles.secondarycard} key={key} onPress={() => handleCity(element)}>
+            <TouchableOpacity
+              style={styles.secondarycard}
+              key={key}
+              onPress={() => handleCity(element)}
+            >
               <Image
                 source={require("../assets/india-gate.png")}
                 style={styles.image}
@@ -86,7 +125,11 @@ const handleTheme = (element) => {
           style={styles.tertiarycards}
         >
           {theme.map((element, key) => (
-            <TouchableOpacity style={styles.tertiarycard} key={key} onPress={() => handleTheme(element)}>
+            <TouchableOpacity
+              style={styles.tertiarycard}
+              key={key}
+              onPress={() => handleTheme(element)}
+            >
               <Text style={styles.tertiarycardTitle}>{element}</Text>
             </TouchableOpacity>
           ))}
@@ -110,7 +153,24 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: "700",
     color: "#F8F8F8",
-    paddingBottom:15,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 20,
+    marginTop: 20,
+    borderColor: "#3c3c3c",
+    borderWidth: 2,
+    borderRadius: 30,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  searchIcon: {
+    marginRight: 10,
+  },
+  textInput: {
+    flex: 1,
+    color: "#fff",
   },
   herocards: {
     marginBottom: 10,
@@ -130,13 +190,13 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     fontSize: 20,
   },
-  subTitle:{
+  subTitle: {
     color: "#00ADB5",
     fontWeight: 400,
     fontSize: 22,
-    marginTop:28,
-    paddingLeft:3,
-    paddingBottom:10,
+    marginTop: 28,
+    paddingLeft: 3,
+    paddingBottom: 10,
   },
   secondarycard: {
     backgroundColor: "#000",
@@ -156,16 +216,16 @@ const styles = StyleSheet.create({
     fontWeight: 400,
     fontSize: 15,
     paddingTop: 5,
-    paddingBottom:5,
+    paddingBottom: 5,
   },
   image: {
     height: 65,
-    aspectRatio:1,
+    aspectRatio: 1,
     alignSelf: "center",
   },
   tertiarycards: {
     marginBottom: 10,
-    marginTop:5,
+    marginTop: 5,
     flex: 1,
   },
   tertiarycard: {

@@ -17,7 +17,9 @@ import Guide from "./src/screens/Guide";
 import Trip from "./src/screens/Trip";
 import Plan from "./src/screens/Plan";
 import City from "./src/screens/City";
-import Theme from "./src/screens/Theme"
+import Theme from "./src/screens/Theme";
+import Filter from "./src/screens/Filter";
+import Add from "./src/screens/Add";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -140,6 +142,16 @@ export default function App() {
           options={{ headerShown: false }}
           name="Theme"
           component={Theme}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="Filter"
+          component={Filter}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="Add"
+          component={Add}
         />
       </Stack.Navigator>
     </NavigationContainer>

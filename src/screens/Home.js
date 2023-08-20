@@ -11,7 +11,6 @@ import {
 import React, { useState, useEffect } from "react";
 import { auth, db } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
-import Icon from "react-native-vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
 
 const Home = () => {
@@ -19,9 +18,9 @@ const Home = () => {
   const [firstName, setFirstName] = useState("");
   const user = auth.currentUser;
   const [data, setData] = useState([
-    "Explore New Monument",
+    "Places Nearby",
     "Local Guide",
-    "Places to Visit",
+    "Top 10 Monuments",
   ]);
   const [monument, setMonument] = useState([
     "India Gate",
@@ -36,7 +35,7 @@ const Home = () => {
     "Environment",
     "Places to Visit",
   ]);
-  const [plan, setPlan] = useState(["Delhi Plan", "Paris Plan", "SF Plan"]);
+  const [plan, setPlan] = useState(["Your Delhi Plan", "Your Paris Plan", "Your SF Plan"]);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -62,12 +61,6 @@ const Home = () => {
     fetchData();
   }, [user]);
 
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const handleChange = (text) => {
-    setSearchTerm(text);
-  };
-
   const handlePlan = (element) => {
     navigation.navigate("Plan", { element });
   };
@@ -87,21 +80,6 @@ const Home = () => {
           Hi, {"\n"}
           <Text style={{ textTransform: "capitalize" }}>{firstName} </Text>
         </Text>
-        <View style={styles.inputContainer}>
-          <Icon
-            name="search"
-            size={20}
-            color="#828282"
-            style={styles.searchIcon}
-          />
-          <TextInput
-            placeholder="Search..."
-            placeholderTextColor="#4E4E4E"
-            value={searchTerm}
-            onChangeText={handleChange}
-            style={styles.textInput}
-          />
-        </View>
         <ScrollView
           horizontal
           // decelerationRate={0}
@@ -197,6 +175,7 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: "700",
     color: "#F8F8F8",
+    paddingBottom: 20,
   },
   inputContainer: {
     flexDirection: "row",

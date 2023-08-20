@@ -318,7 +318,7 @@ const Monument = ({ route }) => {
           snapToAlignment={"center"}
           style={styles.tags}
         >
-          {tags.map((element, key) => (
+          {data.tags && data.tags.length > 0 &&  data.tags.map((element, key) => (
             <View style={styles.tagcont} key={key}>
               <Text style={styles.tagname}>{element}</Text>
             </View>
@@ -578,7 +578,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop:5,
     flex: 1,
-    flexDirection: 'row',   // Cards will be rendered in a row
+    flexDirection: 'row',  
     flexWrap: 'wrap', 
   },
   tagcont: {
@@ -592,6 +592,7 @@ const styles = StyleSheet.create({
     borderColor:"#1c1c1c",
     borderWidth:2,
     marginBottom:5,
+    marginTop:5,
   },
   tagname: {
     color: "#fff",

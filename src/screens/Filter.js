@@ -9,12 +9,12 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import Icon from "react-native-vector-icons/Feather";
-import HeartIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Icons from "react-native-vector-icons/FontAwesome5";
 import { useNavigation } from "@react-navigation/native";
 
-const Theme = ({ route }) => {
-  const { element } = route.params;
+const Filter = () => {
+  // const { element } = route.params;
   const navigation = useNavigation();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -25,13 +25,15 @@ const Theme = ({ route }) => {
   };
 
   const handleBack = () => {
-    navigation.replace("Main");
+    navigation.goBack();
   };
 
-  const [isHeartFilled, setIsHeartFilled] = useState(false);
-  const saved = () => {
-    setIsHeartFilled((prevState) => !prevState);
+  const [isChecked, setIsChecked] = useState(false);
+
+  const toggleCheckbox = () => {
+    setIsChecked(!isChecked);
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -45,63 +47,42 @@ const Theme = ({ route }) => {
             />
           </TouchableOpacity>
           <View style={styles.rightButtons}>
-            <TouchableOpacity onPress={saved} style={styles.button}>
-              <HeartIcons
-                name={isHeartFilled ? "cards-heart" : "cards-heart-outline"}
-                size={25}
-                color={"#fff"}
-                style={styles.icon}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleBack} style={styles.button}>
-              <Icons
-                name="share"
-                size={25}
-                color={"#fff"}
-                style={styles.icon}
-              />
-            </TouchableOpacity>
+            <Text style={styles.title}>Filter</Text>
           </View>
         </View>
-        <Text style={styles.title}>{element}</Text>
-        <View style={styles.inputContainer}>
-          <Icon
-            name="search"
-            size={20}
-            color="#828282"
-            style={styles.searchIcon}
-          />
-          <TextInput
-            placeholder="Search..."
-            placeholderTextColor="#4E4E4E"
-            value={searchTerm}
-            onChangeText={handleChange}
-            style={styles.textInput}
-          />
+        <View>
+          <Text style={styles.heading}>Type</Text>
+          <TouchableOpacity onPress={toggleCheckbox} style={styles.butston}>
+            <MaterialIcons
+              name={isChecked ? "checkbox-blank" : "checkbox-blank-outline"}
+              size={20}
+              color={"#fff"}
+            //   style={styles.icon1}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={toggleCheckbox} style={styles.buttosn}>
+            <MaterialIcons
+              name={isChecked ? "checkbox-blank" : "checkbox-blank-outline"}
+              size={20}
+              color={"#fff"}
+            //   style={styles.icon1}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={toggleCheckbox} style={styles.bsutton}>
+            <MaterialIcons
+              name={isChecked ? "checkbox-blank" : "checkbox-blank-outline"}
+              size={20}
+              color={"#fff"}
+            //   style={styles.icon1}
+            />
+          </TouchableOpacity>
         </View>
-        <ScrollView
-          //   horizontal
-          // decelerationRate={0}
-          // snapToInterval={100}
-          snapToAlignment={"center"}
-          style={styles.herocards}
-        >
-          {data.map((element, key) => (
-            <TouchableOpacity
-              style={styles.card}
-              key={key}
-              onPress={() => handleGuide(element)}
-            >
-              <Text style={styles.cardTitle}>{element}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default Theme;
+export default Filter;
 
 const styles = StyleSheet.create({
   container: {
@@ -112,7 +93,7 @@ const styles = StyleSheet.create({
     paddingTop: 60,
   },
   title: {
-    fontSize: 50,
+    fontSize: 30,
     fontWeight: "700",
     color: "#00ADB5",
     marginTop: 15,
@@ -152,7 +133,7 @@ const styles = StyleSheet.create({
   },
   icon2: {
     textAlign: "center",
-    paddingTop:1,
+    paddingTop: 1,
   },
   buttonRow: {
     flexDirection: "row",
@@ -162,6 +143,7 @@ const styles = StyleSheet.create({
   },
   rightButtons: {
     flexDirection: "row",
+    alignItems: "center",
   },
   button: {
     backgroundColor: "#1c1c1c",
@@ -186,5 +168,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: 400,
     fontSize: 20,
+  },
+  heading: {
+    color: "#fff",
+    fontSize: 25,
+    fontWeight: "700",
+    marginTop: 10,
   },
 });
