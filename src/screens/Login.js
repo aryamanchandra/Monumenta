@@ -51,7 +51,7 @@ const Login = () => {
 
   return (
     <SafeAreaView style={styles.container} behavior="padding">
-      <Text style={styles.title}>Monumenta</Text>
+      <Text style={styles.title}>Sign In</Text>
       <View style={styles.inputContainer}>
         <View style={styles.inputcontainer}>
           <View style={styles.labelContainer}>
@@ -59,7 +59,7 @@ const Login = () => {
           </View>
           <TextInput
             label="Email"
-            placeholder="johndoe@email.com"
+            placeholder="johndoe@xyz.com"
             placeholderTextColor={"#4E4E4E"}
             value={email}
             onChangeText={(text) => setEmail(text)}
@@ -85,7 +85,7 @@ const Login = () => {
       </View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity onPress={handleLogin} style={styles.button}>
-          <Text style={styles.buttonText}>Login</Text>
+          <Text style={styles.buttonText}>Sign In</Text>
         </TouchableOpacity>
         <TouchableOpacity
           //onPress={() => navigation.replace("Register")}
@@ -105,19 +105,21 @@ export default Login;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    // justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#000",
+    paddingTop:150,
   },
   title: {
     fontSize: 40,
     fontWeight: 700,
     color: "#F8F8F8",
+    paddingBottom:50,
   },
   inputContainer: {
     width: "80%",
     marginBottom: 20,
-    marginTop: 50,
+    marginTop: 0,
   },
   input: {
     backgroundColor: "white",
@@ -131,12 +133,12 @@ const styles = StyleSheet.create({
   forgot: {
     fontStyle: "italic",
     paddingLeft: 20,
-    paddingTop: 10,
+    paddingTop: 2,
     textAlign: "left",
     color: "#00ADB5",
   },
   buttonContainer: {
-    width: "80%",
+    width: "60%",
     justifyContent: "center",
     alignItems: "center",
     marginTop: 40,
@@ -168,11 +170,12 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "#E2E2E2",
+    marginTop:8,
   },
   inputcontainer: {
     height: 65,
     position: "relative",
-    marginTop: 10,
+    marginTop: 15,
   },
   labelContainer: {
     position: "absolute",
@@ -183,7 +186,7 @@ const styles = StyleSheet.create({
     zIndex: 50,
   },
   label: {
-    color: "#B0B0B0",
+    color: "#828282",
   },
   textInput: {
     flex: 1,
@@ -193,7 +196,7 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     margin: 5,
     borderRadius: 30,
-    borderColor: "#B0B0B0",
+    borderColor: "#828282",
     color: "#fff",
   },
 });

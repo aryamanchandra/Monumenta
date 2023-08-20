@@ -54,7 +54,7 @@ const SignUp = () => {
 
   return (
     <SafeAreaView style={styles.container} behavior="padding">
-      <Text style={styles.title}>Monumenta</Text>
+      <Text style={styles.title}>Sign Up</Text>
       <View style={styles.inputContainer}>
         <View style={styles.inputcontainer}>
           <View style={styles.labelContainer}>
@@ -85,7 +85,7 @@ const SignUp = () => {
             <Text style={styles.label}>Email</Text>
           </View>
           <TextInput
-            placeholder="johndoe@email.com"
+            placeholder="johndoe@xyz.com"
             placeholderTextColor={"#4E4E4E"}
             value={email}
             onChangeText={(text) => setEmail(text)}
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 40,
-    fontWeight: 700,
+    fontWeight: 700,  
     color: "#F8F8F8",
   },
   inputContainer: {
@@ -191,11 +191,12 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "#E2E2E2",
+    marginTop:8,
   },
   inputcontainer: {
     height: 65,
     position: "relative",
-    marginTop: 10,
+    marginTop: 15,
   },
   labelContainer: {
     position: "absolute",
@@ -206,7 +207,7 @@ const styles = StyleSheet.create({
     zIndex: 50,
   },
   label: {
-    color: "#B0B0B0",
+    color: "#828282",
   },
   textInput: {
     flex: 1,
@@ -216,7 +217,7 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
     margin: 5,
     borderRadius: 30,
-    borderColor: "#B0B0B0",
+    borderColor: "#828282",
     color: "#fff",
   },
 });
