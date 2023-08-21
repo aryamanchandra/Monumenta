@@ -7,11 +7,13 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Icon from "react-native-vector-icons/Feather";
 import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Icons from "react-native-vector-icons/FontAwesome5";
 import { useNavigation } from "@react-navigation/native";
+import { db } from "../../firebase";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 const City = ({ route }) => {
   const { element } = route.params;
@@ -47,6 +49,49 @@ const City = ({ route }) => {
     "Nearby",
     "Nearby",
   ]);
+
+  useEffect(() => {
+    if (showResults) {
+      setShowResults(false);
+      setSearchResults([]);
+    }
+  }, [showResults]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("tabPress", () => {
+      setSearchTerm("");
+      setShowResults(false);
+      setSearchResults([]);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  const [showResults, setShowResults] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+
+  const handleSearch = async () => {
+    if (searchTerm.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+
+    q = query(
+      collection(db, "Monuments"),
+      where("tags", "array-contains", element.toLowerCase())
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    const results = querySnapshot.docs
+      .map((doc) => doc.data())
+      .filter((doc) => doc.tags.includes(searchTerm.toLowerCase()));
+    setSearchResults(results);
+  };
+
+  const handleSearchFocus = () => {
+    setShowResults(true);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -99,11 +144,12 @@ const City = ({ route }) => {
             placeholder="Search..."
             placeholderTextColor="#4E4E4E"
             value={searchTerm}
-            onChangeText={handleChange}
+            onChangeText={(text) => setSearchTerm(text)}
+            onSubmitEditing={handleSearch}
+            onFocus={handleSearchFocus}
             style={styles.textInput}
           />
         </View>
-
         <ScrollView
           horizontal
           // decelerationRate={0}
@@ -117,23 +163,37 @@ const City = ({ route }) => {
             </View>
           ))}
         </ScrollView>
-        <ScrollView
-          //   horizontal
-          // decelerationRate={0}
-          // snapToInterval={100}
-          snapToAlignment={"center"}
-          style={styles.herocards}
-        >
-          {data.map((element, key) => (
-            <TouchableOpacity
-              style={styles.card}
-              key={key}
-              onPress={() => handleGuide(element)}
-            >
-              <Text style={styles.cardTitle}>{element}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+        {showResults ? (
+          <ScrollView>
+            {searchResults.map((element, key) => (
+              <TouchableOpacity
+                style={styles.card}
+                key={key}
+                onPress={() => handleGuide(element.city)}
+              >
+                <Text style={styles.cardTitle}>{element.city}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        ) : (
+          <ScrollView
+            //   horizontal
+            // decelerationRate={0}
+            // snapToInterval={100}
+            snapToAlignment={"center"}
+            style={styles.herocards}
+          >
+            {data.map((element, key) => (
+              <TouchableOpacity
+                style={styles.card}
+                key={key}
+                onPress={() => handleGuide(element)}
+              >
+                <Text style={styles.cardTitle}>{element}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

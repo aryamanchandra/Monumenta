@@ -7,10 +7,13 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  FlatList,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Feather";
+import { db } from "../../firebase";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 const Explore = () => {
   const [data, setData] = useState([
@@ -37,13 +40,28 @@ const Explore = () => {
     "Cochin",
   ]);
 
+  useEffect(() => {
+    if (showResults) {
+      setShowResults(false);
+      setSearchResults([]);
+    }
+  }, [showResults])
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("tabPress", () => {
+      setSearchTerm("");
+      setShowResults(false);
+      setSearchResults([]);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   const navigation = useNavigation();
 
   const [searchTerm, setSearchTerm] = useState("");
-
-  const handleChange = (text) => {
-    setSearchTerm(text);
-  };
+  const [showResults, setShowResults] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
 
   const handleGuide = (element) => {
     navigation.navigate("City", { element });
@@ -55,6 +73,27 @@ const Explore = () => {
 
   const handleTheme = (element) => {
     navigation.navigate("Theme", { element });
+  };
+
+  const handleSearch = async () => {
+    if (searchTerm.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+
+    q = query(
+      collection(db, "Monuments"),
+      where("tags", "array-contains", searchTerm.toLowerCase())
+    );
+
+    const querySnapshot = await getDocs(q);
+  
+    const results = querySnapshot.docs.map((doc) => doc.data());
+    setSearchResults(results);
+  };
+
+  const handleSearchFocus = () => {
+    setShowResults(true);
   };
 
   return (
@@ -71,70 +110,86 @@ const Explore = () => {
           placeholder="Search..."
           placeholderTextColor="#4E4E4E"
           value={searchTerm}
-          onChangeText={handleChange}
+          onChangeText={(text) => setSearchTerm(text)}
+          onSubmitEditing={handleSearch}
+          onFocus={handleSearchFocus}
           style={styles.textInput}
         />
       </View>
-      <ScrollView>
-        <ScrollView
-          horizontal
-          // decelerationRate={0}
-          // snapToInterval={100}
-          snapToAlignment={"center"}
-          style={styles.herocards}
-        >
-          {data.map((element, key) => (
+      {showResults ? (
+        <ScrollView>
+          {searchResults.map((element, key) => (
             <TouchableOpacity
               style={styles.card}
               key={key}
-              onPress={() => handleGuide(element)}
+              onPress={() => handleGuide(element.city)}
             >
-              <Text style={styles.cardTitle}>{element}</Text>
+              <Text style={styles.cardTitle}>{element.city}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
-        <Text style={styles.subTitle}>Cities to explore</Text>
-        <ScrollView
-          horizontal
-          snapToAlignment={"center"}
-          style={styles.secondarycards}
-          flexDirection="row"
-          flex={2}
-        >
-          {monument.map((element, key) => (
-            <TouchableOpacity
-              style={styles.secondarycard}
-              key={key}
-              onPress={() => handleCity(element)}
-            >
-              <Image
-                source={require("../assets/india-gate.png")}
-                style={styles.image}
-                resizeMode="contain"
-              />
-              <Text style={styles.secondarycardTitle}>{element}</Text>
-            </TouchableOpacity>
-          ))}
+      ) : (
+        <ScrollView>
+          <ScrollView
+            horizontal
+            // decelerationRate={0}
+            // snapToInterval={100}
+            snapToAlignment={"center"}
+            style={styles.herocards}
+          >
+            {data.map((element, key) => (
+              <TouchableOpacity
+                style={styles.card}
+                key={key}
+                onPress={() => handleGuide(element)}
+              >
+                <Text style={styles.cardTitle}>{element}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+          <Text style={styles.subTitle}>Cities to explore</Text>
+          <ScrollView
+            horizontal
+            snapToAlignment={"center"}
+            style={styles.secondarycards}
+            flexDirection="row"
+            flex={2}
+          >
+            {monument.map((element, key) => (
+              <TouchableOpacity
+                style={styles.secondarycard}
+                key={key}
+                onPress={() => handleCity(element)}
+              >
+                <Image
+                  source={require("../assets/india-gate.png")}
+                  style={styles.image}
+                  resizeMode="contain"
+                />
+                <Text style={styles.secondarycardTitle}>{element}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+          <Text style={styles.subTitle}>Themes to explore</Text>
+          <ScrollView
+            horizontal
+            // decelerationRate={0}
+            // snapToInterval={100}
+            snapToAlignment={"center"}
+            style={styles.tertiarycards}
+          >
+            {theme.map((element, key) => (
+              <TouchableOpacity
+                style={styles.tertiarycard}
+                key={key}
+                onPress={() => handleTheme(element)}
+              >
+                <Text style={styles.tertiarycardTitle}>{element}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </ScrollView>
-        <Text style={styles.subTitle}>Themes to explore</Text>
-        <ScrollView
-          horizontal
-          // decelerationRate={0}
-          // snapToInterval={100}
-          snapToAlignment={"center"}
-          style={styles.tertiarycards}
-        >
-          {theme.map((element, key) => (
-            <TouchableOpacity
-              style={styles.tertiarycard}
-              key={key}
-              onPress={() => handleTheme(element)}
-            >
-              <Text style={styles.tertiarycardTitle}>{element}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </ScrollView>
+      )}
     </SafeAreaView>
   );
 };
