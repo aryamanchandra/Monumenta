@@ -15,9 +15,16 @@ import Icons from "react-native-vector-icons/FontAwesome5";
 import HeartIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Icon from "react-native-vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../firebase";
-import CircleGroup from "../components/CircleGroup";
+import {
+  deleteField,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
+import { auth, db } from "../../firebase";
 
 const Monument = ({ route }) => {
   const { element } = route.params;
@@ -61,32 +68,54 @@ const Monument = ({ route }) => {
     "Cochin",
   ]);
 
-  const [news, setNews] = useState([
-    "Mughal",
-    "Chola",
-    "British",
-    "Kolkata",
-  ]);
+  const [news, setNews] = useState(["Mughal", "Chola", "British", "Kolkata"]);
 
-  const [tags, setTags] = useState([
-    "Mughal",
-    "Delhi",
-    "British",
-  ]);
+  const [tags, setTags] = useState(["Mughal", "Delhi", "British"]);
 
-  const handleBack = ()=> {
+  const handleBack = () => {
     navigation.goBack();
-  }
+  };
 
-  const handleWiki = ()=> {
+  const handleWiki = () => {
     const link = "https://en.wikipedia.org/wiki/India_Gate"; // Replace with your desired link
     Linking.openURL(link);
-  }
+  };
 
   const [isHeartFilled, setIsHeartFilled] = useState(false);
-  const saved = ()=> {
-    setIsHeartFilled(prevState => !prevState);
-  }
+  const saved = async () => {
+    const email = auth.currentUser?.email;
+    const docRef = doc(db, "User-Data", email);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      if (!isHeartFilled) {
+        await updateDoc(doc(db, "User-Data", email), {
+          savedmonument: arrayUnion(element),
+        });
+        setIsHeartFilled(true);
+      } else {
+        if ("savedcity" in data) {
+          await updateDoc(doc(db, "User-Data", email), {
+            savedmonument: arrayRemove(element),
+          });
+          setIsHeartFilled(false);
+        }
+      }
+    }
+  };
+
+  useEffect(() => {
+    const heartcheck = async () => {
+      const docRef = doc(db, "User-Data", auth.currentUser?.email);
+      const docSnap = await getDoc(docRef);
+      const data = docSnap.data();
+      if (data && data.savedmonument && data.savedmonument.includes(element)) {
+        setIsHeartFilled(true);
+      }
+    };
+    heartcheck();
+  }, [isHeartFilled]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -218,7 +247,7 @@ const Monument = ({ route }) => {
             </TouchableOpacity>
           ))}
         </ScrollView>
-        <View style={{marginBottom:20}}>
+        <View style={{ marginBottom: 20 }}>
           <Text style={styles.heading}>Review</Text>
           <Image
             source={require("../assets/review-glass.png")}
@@ -250,7 +279,7 @@ const Monument = ({ route }) => {
             </View>
           </View>
         </View>
-        <View style={{marginBottom:30}}>
+        <View style={{ marginBottom: 30 }}>
           <Text style={styles.heading}>Details</Text>
           {detail.map((item, index) => (
             <View style={styles.row} key={index}>
@@ -265,22 +294,24 @@ const Monument = ({ route }) => {
             </View>
           ))}
         </View>
-        <View style={{marginBottom:20}}>
+        <View style={{ marginBottom: 20 }}>
           <Text style={styles.heading}>Tickets</Text>
           <Image
-              source={require("../assets/ticket-glass.png")}
-              style={styles.ticketglass}
-              resizeMode="contain"
-            />
-            <Text style={styles.ticketText}>This place doesn’t require any tickets</Text>
+            source={require("../assets/ticket-glass.png")}
+            style={styles.ticketglass}
+            resizeMode="contain"
+          />
+          <Text style={styles.ticketText}>
+            This place doesn’t require any tickets
+          </Text>
         </View>
         <View>
           <Text style={styles.heading}>Inside Map</Text>
           <Image
-              source={require("../assets/review-glass.png")}
-              style={styles.reviewglass}
-              resizeMode="contain"
-            />
+            source={require("../assets/review-glass.png")}
+            style={styles.reviewglass}
+            resizeMode="contain"
+          />
         </View>
         <Text style={styles.heading}>Events</Text>
         <ScrollView
@@ -318,13 +349,14 @@ const Monument = ({ route }) => {
           snapToAlignment={"center"}
           style={styles.tags}
         >
-          {data.tags && data.tags.length > 0 &&  data.tags.map((element, key) => (
-            <View style={styles.tagcont} key={key}>
-              <Text style={styles.tagname}>{element}</Text>
-            </View>
-          ))}
+          {data.tags &&
+            data.tags.length > 0 &&
+            data.tags.map((element, key) => (
+              <View style={styles.tagcont} key={key}>
+                <Text style={styles.tagname}>{element}</Text>
+              </View>
+            ))}
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );
@@ -380,7 +412,7 @@ const styles = StyleSheet.create({
   },
   icon2: {
     textAlign: "center",
-    paddingTop:1,
+    paddingTop: 1,
   },
   image: {
     height: 300,
@@ -524,17 +556,17 @@ const styles = StyleSheet.create({
     // aspectRatio: 1,
     alignSelf: "center",
     opacity: 0.95,
-    top:15,
+    top: 15,
   },
   ticketText: {
     color: "#fff",
     textAlign: "center",
     fontSize: 15,
-    top:-23,
+    top: -23,
   },
   tertiarycards2: {
     marginBottom: 10,
-    marginTop:5,
+    marginTop: 5,
     flex: 1,
   },
   tertiarycard2: {
@@ -555,7 +587,7 @@ const styles = StyleSheet.create({
   },
   quarternarycards2: {
     marginBottom: 10,
-    marginTop:5,
+    marginTop: 5,
     flex: 1,
   },
   quarternarycard2: {
@@ -576,10 +608,10 @@ const styles = StyleSheet.create({
   },
   tags: {
     marginBottom: 10,
-    marginTop:5,
+    marginTop: 5,
     flex: 1,
-    flexDirection: 'row',  
-    flexWrap: 'wrap', 
+    flexDirection: "row",
+    flexWrap: "wrap",
   },
   tagcont: {
     // backgroundColor: "#1c1c1c",
@@ -589,10 +621,10 @@ const styles = StyleSheet.create({
     height: 35,
     width: 100,
     marginRight: 5,
-    borderColor:"#1c1c1c",
-    borderWidth:2,
-    marginBottom:5,
-    marginTop:5,
+    borderColor: "#1c1c1c",
+    borderWidth: 2,
+    marginBottom: 5,
+    marginTop: 5,
   },
   tagname: {
     color: "#fff",

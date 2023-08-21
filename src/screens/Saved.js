@@ -7,25 +7,35 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Icon from "react-native-vector-icons/Feather";
 import HeartIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Icons from "react-native-vector-icons/FontAwesome5";
 import { useNavigation } from "@react-navigation/native";
+import { auth, db } from "../../firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 const Saved = () => {
   const navigation = useNavigation();
 
-  const [data, setData] = useState(["Monument 1", "Monument 2", "Monument 3"]);
+  const [monument, setMonument] = useState([]);
+  const [city, setCity] = useState([]);
 
   const handleBack = () => {
     navigation.goBack();
   };
 
-  const [isHeartFilled, setIsHeartFilled] = useState(false);
-  const saved = () => {
-    setIsHeartFilled((prevState) => !prevState);
-  };
+  useEffect(() => {
+    const display = async () => {
+      const docRef = doc(db, "User-Data", auth.currentUser?.email);
+      const docSnap = await getDoc(docRef);
+      const data = docSnap.data();
+      setCity(data.savedcity);
+      setMonument(data.savemonument);
+    };
+    display();
+  });
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -47,7 +57,7 @@ const Saved = () => {
           snapToAlignment={"center"}
           style={styles.herocards}
         >
-          {data.map((element, key) => (
+          {monument.map((element, key) => (
             <TouchableOpacity
               style={styles.card}
               key={key}
@@ -78,7 +88,7 @@ const styles = StyleSheet.create({
     color: "#00ADB5",
     marginTop: 15,
     textAlign: "center",
-    marginBottom:15,
+    marginBottom: 15,
   },
   subtitle: {
     color: "#00ADB5",
@@ -114,7 +124,7 @@ const styles = StyleSheet.create({
   },
   icon2: {
     textAlign: "center",
-    paddingTop:1,
+    paddingTop: 1,
   },
   buttonRow: {
     flexDirection: "row",

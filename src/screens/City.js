@@ -12,8 +12,18 @@ import Icon from "react-native-vector-icons/Feather";
 import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Icons from "react-native-vector-icons/FontAwesome5";
 import { useNavigation } from "@react-navigation/native";
-import { db } from "../../firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { auth, db } from "../../firebase";
+import {
+  collection,
+  query,
+  doc,
+  where,
+  getDocs,
+  getDoc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
 
 const City = ({ route }) => {
   const { element } = route.params;
@@ -31,8 +41,27 @@ const City = ({ route }) => {
   };
 
   const [isHeartFilled, setIsHeartFilled] = useState(false);
-  const saved = () => {
-    setIsHeartFilled((prevState) => !prevState);
+  const saved = async () => {
+    const email = auth.currentUser?.email;
+    const docRef = doc(db, "User-Data", email);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+      if (!isHeartFilled) {
+        await updateDoc(doc(db, "User-Data", email), {
+          savedcity: arrayUnion(element),
+        });
+        setIsHeartFilled(true);
+      } else {
+        if ("savedcity" in data) {
+          await updateDoc(doc(db, "User-Data", email), {
+            savedcity: arrayRemove(element),
+          });
+          setIsHeartFilled(false);
+        }
+      }
+    }
   };
 
   const [isFilterFilled, setIsFilterFilled] = useState(false);
@@ -51,11 +80,16 @@ const City = ({ route }) => {
   ]);
 
   useEffect(() => {
-    if (showResults) {
-      setShowResults(false);
-      setSearchResults([]);
-    }
-  }, [showResults]);
+    const heartcheck = async () => {
+      const docRef = doc(db, "User-Data", auth.currentUser?.email);
+      const docSnap = await getDoc(docRef);
+      const data = docSnap.data();
+      if (data && data.savedcity && data.savedcity.includes(element)) {
+        setIsHeartFilled(true);
+      }
+    };
+    heartcheck();
+  }, [isHeartFilled]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("tabPress", () => {
@@ -75,15 +109,15 @@ const City = ({ route }) => {
         collection(db, "Monuments"),
         where("tags", "array-contains", element.toLowerCase())
       );
-  
+
       const querySnapshot = await getDocs(q);
-  
+
       const displayresults = querySnapshot.docs.map((doc) => doc.data());
       setDisplayResults(displayresults);
-    }
+    };
 
     display();
-  },[showDisplayResults])
+  }, [showDisplayResults]);
 
   const [showResults, setShowResults] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
