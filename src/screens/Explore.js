@@ -64,7 +64,7 @@ const Explore = () => {
   const [searchResults, setSearchResults] = useState([]);
 
   const handleGuide = (element) => {
-    navigation.navigate("City", { element });
+    navigation.navigate("Guide", { element });
   };
 
   const handleCity = (element) => {

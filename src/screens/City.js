@@ -67,6 +67,24 @@ const City = ({ route }) => {
     return unsubscribe;
   }, [navigation]);
 
+  const [showDisplayResults, setDisplayResults] = useState([]);
+
+  useEffect(() => {
+    const display = async () => {
+      q = query(
+        collection(db, "Monuments"),
+        where("tags", "array-contains", element.toLowerCase())
+      );
+  
+      const querySnapshot = await getDocs(q);
+  
+      const displayresults = querySnapshot.docs.map((doc) => doc.data());
+      setDisplayResults(displayresults);
+    }
+
+    display();
+  },[showDisplayResults])
+
   const [showResults, setShowResults] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
 
@@ -183,13 +201,13 @@ const City = ({ route }) => {
             snapToAlignment={"center"}
             style={styles.herocards}
           >
-            {data.map((element, key) => (
+            {showDisplayResults.map((element, key) => (
               <TouchableOpacity
                 style={styles.card}
                 key={key}
                 onPress={() => handleGuide(element)}
               >
-                <Text style={styles.cardTitle}>{element}</Text>
+                <Text style={styles.cardTitle}>{element.city}</Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
