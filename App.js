@@ -23,6 +23,7 @@ import Add from "./src/screens/Add";
 import Preserve from "./src/screens/Preserve";
 import Saved from "./src/screens/Saved"
 import Help from "./src/screens/Help"
+import Location from "./src/screens/Location"
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -170,6 +171,11 @@ export default function App() {
           options={{ headerShown: false }}
           name="Help"
           component={Help}
+        />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="Location"
+          component={Location}
         />
       </Stack.Navigator>
     </NavigationContainer>

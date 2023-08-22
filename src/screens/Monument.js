@@ -25,6 +25,7 @@ import {
   arrayRemove,
 } from "firebase/firestore";
 import { auth, db } from "../../firebase";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Monument = ({ route }) => {
   const { element } = route.params;
@@ -119,12 +120,21 @@ const Monument = ({ route }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const docRef = doc(db, "Monuments", element);
       try {
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const dataref = docSnap.data();
-          setData(dataref);
+        const cachedData = await AsyncStorage.getItem(element);
+
+        if (cachedData) {
+          setData(JSON.parse(cachedData));
+        } else {
+          const docRef = doc(db, "Monuments", element);
+          const docSnap = await getDoc(docRef);
+          
+          if (docSnap.exists()) {
+            const dataref = docSnap.data();
+            setData(dataref);
+            
+            await AsyncStorage.setItem(element, JSON.stringify(dataref));
+          }
         }
       } catch (e) {
         console.log(e);
@@ -133,6 +143,24 @@ const Monument = ({ route }) => {
 
     fetchData();
   }, [element]);
+
+  const removeCachedData = async (key) => {
+    try {
+      await AsyncStorage.removeItem(key);
+      console.log(`Successfully removed ${key} from AsyncStorage`);
+    } catch (error) {
+      console.error(`Error removing ${key} from AsyncStorage:`, error);
+    }
+  };
+
+  const handleRemoveCachedData = async () => {
+    try {
+      // Replace 'element' with the appropriate key you used to cache the data
+      await removeCachedData(element);
+    } catch (error) {
+      console.error('Error removing cached data:', error);
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -155,7 +183,7 @@ const Monument = ({ route }) => {
                 style={styles.icon2}
               />
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleBack} style={styles.button}>
+            <TouchableOpacity onPress={handleRemoveCachedData} style={styles.button}>
               <Icons
                 name="share"
                 size={25}
@@ -167,7 +195,7 @@ const Monument = ({ route }) => {
         </View>
         <Text style={styles.title}>{element}</Text>
         <Text style={styles.subtitle}>
-          {data.place}, {data.country}
+          {data.city}, {data.country}
         </Text>
 
         <Image

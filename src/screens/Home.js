@@ -16,8 +16,7 @@ import Icons from "react-native-vector-icons/FontAwesome5";
 
 const Home = () => {
   const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const user = auth.currentUser;
+  const [userinfo, setUser] = useState([]);
   const [data, setData] = useState([
     "Places Nearby",
     "Local Guide",
@@ -42,6 +41,7 @@ const Home = () => {
     "Your SF Plan",
   ]);
   const navigation = useNavigation();
+  const user = auth.currentUser;
 
   useEffect(() => {
     if (user) {
@@ -56,7 +56,7 @@ const Home = () => {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
-          setFirstName(data.firstname);
+          setUser(data);
         }
       } catch (e) {
         console.log(e);
@@ -86,12 +86,16 @@ const Home = () => {
     navigation.navigate("City", { element });
   };
 
+  const handleGeneral = (element) => {
+    navigation.navigate("Explore");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <Text style={styles.title}>
           Hi, {"\n"}
-          <Text style={{ textTransform: "capitalize" }}>{firstName} </Text>
+          <Text style={{ textTransform: "capitalize" }}>{userinfo.firstname} </Text>
         </Text>
         <ScrollView
           horizontal
@@ -110,38 +114,77 @@ const Home = () => {
             </TouchableOpacity>
           ))}
         </ScrollView>
-        <View style={styles.header}>
-          <Text style={styles.subTitle}>Close to You</Text>
-          <TouchableOpacity style={styles.seemoreheader} onPress={() => handleNearby("Delhi")}>
-            <Text style={styles.seemore}>See More</Text>
-            <Icons
-              name="angle-right"
-              style={styles.icon1}
-            />
-          </TouchableOpacity>
-        </View>
-        <ScrollView
-          horizontal
-          snapToAlignment={"center"}
-          style={styles.secondarycards}
-          flexDirection="row"
-          flex={2}
-        >
-          {monument.map((element, key) => (
-            <TouchableOpacity
-              style={styles.secondarycard}
-              key={key}
-              onPress={() => handlePage(element)}
+        {(!userinfo.location) ? (
+          <View>
+            <View style={styles.header}>
+              <Text style={styles.subTitle}>Monuments to explore</Text>
+              <TouchableOpacity
+                style={styles.seemoreheader}
+                onPress={() => handleGeneral()}
+              >
+                <Text style={styles.seemore}>See More</Text>
+                <Icons name="angle-right" style={styles.icon1} />
+              </TouchableOpacity>
+            </View>
+            <ScrollView
+              horizontal
+              snapToAlignment={"center"}
+              style={styles.secondarycards}
+              flexDirection="row"
+              flex={2}
             >
-              <Image
-                source={require("../assets/india-gate.png")}
-                style={styles.image}
-                resizeMode="contain"
-              />
-              <Text style={styles.secondarycardTitle}>{element}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+              {monument.map((element, key) => (
+                <TouchableOpacity
+                  style={styles.secondarycard}
+                  key={key}
+                  onPress={() => handlePage(element)}
+                >
+                  <Image
+                    source={require("../assets/india-gate.png")}
+                    style={styles.image}
+                    resizeMode="contain"
+                  />
+                  <Text style={styles.secondarycardTitle}>{element}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        ) : (
+          <View>
+            <View style={styles.header}>
+              <Text style={styles.subTitle}>Close to You</Text>
+              <TouchableOpacity
+                style={styles.seemoreheader}
+                onPress={() => handleNearby(userinfo.location)}
+              >
+                <Text style={styles.seemore}>See More</Text>
+                <Icons name="angle-right" style={styles.icon1} />
+              </TouchableOpacity>
+            </View>
+            <ScrollView
+              horizontal
+              snapToAlignment={"center"}
+              style={styles.secondarycards}
+              flexDirection="row"
+              flex={2}
+            >
+              {monument.map((element, key) => (
+                <TouchableOpacity
+                  style={styles.secondarycard}
+                  key={key}
+                  onPress={() => handlePage(element)}
+                >
+                  <Image
+                    source={require("../assets/india-gate.png")}
+                    style={styles.image}
+                    resizeMode="contain"
+                  />
+                  <Text style={styles.secondarycardTitle}>{element}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
 
         <Text style={styles.subTitle}>Your Travel Plans</Text>
 
@@ -262,9 +305,9 @@ const styles = StyleSheet.create({
     color: "#00ADB5",
   },
   icon1: {
-    paddingLeft:3,
+    paddingLeft: 3,
     paddingTop: 5,
-    fontSize:20,
+    fontSize: 20,
     color: "#00ADB5",
   },
   secondarycards: {

@@ -92,6 +92,10 @@ const Settings = () => {
     navigation.navigate("Help");
   };
 
+  const handleLocation = () => {
+    navigation.navigate("Location");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -133,7 +137,13 @@ const Settings = () => {
               <Text style={styles.textTitle}>Location</Text>
             </View>
             <View style={styles.settingRight}>
-              <Text style={styles.text}>Delhi</Text>
+              {data.location ? (
+                <Text style={styles.text}>Delhi</Text>
+              ) : (
+                <TouchableOpacity onPress={handleLocation}>
+                  <Text style={[styles.text,styles.forgot]}>Set Location</Text>
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </View>

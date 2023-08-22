@@ -24,6 +24,7 @@ import {
   arrayUnion,
   arrayRemove,
 } from "firebase/firestore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const City = ({ route }) => {
   const { element } = route.params;
@@ -104,20 +105,32 @@ const City = ({ route }) => {
   const [showDisplayResults, setDisplayResults] = useState([]);
 
   useEffect(() => {
-    const display = async () => {
-      q = query(
-        collection(db, "Monuments"),
-        where("tags", "array-contains", element.toLowerCase())
-      );
+    const fetchData = async () => {
+      try {
+        const cachedData = await AsyncStorage.getItem(element);
 
-      const querySnapshot = await getDocs(q);
+        if (cachedData) {
+          setDisplayResults(JSON.parse(cachedData));
+        } else {
+          q = query(
+            collection(db, "Monuments"),
+            where("tags", "array-contains", element.toLowerCase())
+          );
 
-      const displayresults = querySnapshot.docs.map((doc) => doc.data());
-      setDisplayResults(displayresults);
+          const querySnapshot = await getDocs(q);
+
+          const displayresults = querySnapshot.docs.map((doc) => doc.data());
+          setDisplayResults(displayresults);
+
+          await AsyncStorage.setItem(element, JSON.stringify(displayresults));
+        }
+      } catch (e) {
+        console.log(e);
+      }
     };
 
-    display();
-  }, [showDisplayResults]);
+    fetchData();
+  }, [element]);
 
   const [showResults, setShowResults] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
