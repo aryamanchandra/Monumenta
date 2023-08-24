@@ -25,7 +25,7 @@ import {
   arrayRemove,
 } from "firebase/firestore";
 import { auth, db } from "../../firebase";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Monument = ({ route }) => {
   const { element } = route.params;
@@ -107,32 +107,26 @@ const Monument = ({ route }) => {
   };
 
   useEffect(() => {
-    const heartcheck = async () => {
-      const docRef = doc(db, "User-Data", auth.currentUser?.email);
-      const docSnap = await getDoc(docRef);
-      const data = docSnap.data();
-      if (data && data.savedmonument && data.savedmonument.includes(element)) {
-        setIsHeartFilled(true);
-      }
-    };
-    heartcheck();
-  }, [isHeartFilled]);
-
-  useEffect(() => {
     const fetchData = async () => {
       try {
         const cachedData = await AsyncStorage.getItem(element);
-
+  
         if (cachedData) {
-          setData(JSON.parse(cachedData));
+          const parsedCachedData = JSON.parse(cachedData);
+  
+          if (typeof parsedCachedData === 'boolean') {
+            setIsHeartFilled(parsedCachedData);
+          } else {
+            setData(parsedCachedData);
+          }
         } else {
           const docRef = doc(db, "Monuments", element);
           const docSnap = await getDoc(docRef);
-          
+  
           if (docSnap.exists()) {
             const dataref = docSnap.data();
+  
             setData(dataref);
-            
             await AsyncStorage.setItem(element, JSON.stringify(dataref));
           }
         }
@@ -140,9 +134,10 @@ const Monument = ({ route }) => {
         console.log(e);
       }
     };
-
+  
     fetchData();
   }, [element]);
+  
 
   const removeCachedData = async (key) => {
     try {
@@ -158,7 +153,7 @@ const Monument = ({ route }) => {
       // Replace 'element' with the appropriate key you used to cache the data
       await removeCachedData(element);
     } catch (error) {
-      console.error('Error removing cached data:', error);
+      console.error("Error removing cached data:", error);
     }
   };
 
@@ -183,7 +178,10 @@ const Monument = ({ route }) => {
                 style={styles.icon2}
               />
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleRemoveCachedData} style={styles.button}>
+            <TouchableOpacity
+              onPress={handleRemoveCachedData}
+              style={styles.button}
+            >
               <Icons
                 name="share"
                 size={25}

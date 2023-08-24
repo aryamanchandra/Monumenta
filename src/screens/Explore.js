@@ -14,6 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Feather";
 import { db } from "../../firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Explore = () => {
   const [data, setData] = useState([
@@ -22,7 +23,7 @@ const Explore = () => {
     "Indian Temples",
   ]);
 
-  const [monument, setMonument] = useState([
+  const [city, setCity] = useState([
     "Delhi",
     "Mumbai",
     "Chennai",
@@ -45,7 +46,7 @@ const Explore = () => {
       setShowResults(false);
       setSearchResults([]);
     }
-  }, [showResults])
+  }, [showResults]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("tabPress", () => {
@@ -56,6 +57,41 @@ const Explore = () => {
 
     return unsubscribe;
   }, [navigation]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const cachedData = await AsyncStorage.getItem("explore-city");
+        // const cachedData = false;
+        if (cachedData) {
+          const parsedCachedData = JSON.parse(cachedData);
+          setCity(parsedCachedData);
+        } else {
+          try {
+            const querySnapshot = await getDocs(collection(db, "Monuments"));
+            const MonumentsData = [];
+            querySnapshot.forEach((doc) => {
+              MonumentsData.push(doc.data());
+            });
+
+            const cityNames = MonumentsData.map((monument) => monument.city);
+            const filteredCityNames = cityNames.filter(cityName => cityName !== "Various Locations");
+            const uniqueSortedCityNames = [...new Set(filteredCityNames)].sort();
+            // console.log(filteredCityNames);
+            setCity(uniqueSortedCityNames);
+
+            await AsyncStorage.setItem("explore-city", JSON.stringify(uniqueSortedCityNames));
+          } catch (e) {
+            console.log(e);
+          }
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const navigation = useNavigation();
 
@@ -87,7 +123,7 @@ const Explore = () => {
     );
 
     const querySnapshot = await getDocs(q);
-  
+
     const results = querySnapshot.docs.map((doc) => doc.data());
     setSearchResults(results);
   };
@@ -155,7 +191,7 @@ const Explore = () => {
             flexDirection="row"
             flex={2}
           >
-            {monument.map((element, key) => (
+            {city.map((element, key) => (
               <TouchableOpacity
                 style={styles.secondarycard}
                 key={key}

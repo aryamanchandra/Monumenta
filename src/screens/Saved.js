@@ -6,6 +6,7 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Icon from "react-native-vector-icons/Feather";
@@ -14,6 +15,7 @@ import Icons from "react-native-vector-icons/FontAwesome5";
 import { useNavigation } from "@react-navigation/native";
 import { auth, db } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Saved = () => {
   const navigation = useNavigation();
@@ -31,10 +33,10 @@ const Saved = () => {
       const docSnap = await getDoc(docRef);
       const data = docSnap.data();
       setCity(data.savedcity);
-      setMonument(data.savemonument);
+      setMonument(data.savedmonument);
     };
     display();
-  });
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -50,23 +52,49 @@ const Saved = () => {
           </TouchableOpacity>
         </View>
         <Text style={styles.title}>Saved</Text>
-        <ScrollView
+        <Text style={styles.subtitle}>Monuments</Text>
+        <View
           //   horizontal
           // decelerationRate={0}
           // snapToInterval={100}
           snapToAlignment={"center"}
           style={styles.herocards}
         >
-          {monument.map((element, key) => (
-            <TouchableOpacity
-              style={styles.card}
-              key={key}
-              onPress={() => handleGuide(element)}
-            >
-              <Text style={styles.cardTitle}>{element}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+          {monument &&
+            monument.map((element, key) => (
+              <TouchableOpacity
+                style={styles.card}
+                key={key}
+                onPress={() => handleGuide(element)}
+              >
+                <Image
+                  source={require("../assets/india-gate.png")}
+                  style={styles.image}
+                  resizeMode="contain"
+                />
+                <Text style={styles.cardTitle}>{element}</Text>
+              </TouchableOpacity>
+            ))}
+        </View>
+        <Text style={styles.subtitle}>City</Text>
+        <View
+          //   horizontal
+          // decelerationRate={0}
+          // snapToInterval={100}
+          snapToAlignment={"center"}
+          style={styles.herocards}
+        >
+          {city &&
+            city.map((element, key) => (
+              <TouchableOpacity
+                style={styles.card}
+                key={key}
+                onPress={() => handleGuide(element)}
+              >
+                <Text style={styles.cardTitle}>{element}</Text>
+              </TouchableOpacity>
+            ))}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -95,7 +123,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     fontSize: 22,
     paddingLeft: 3,
-    textAlign: "center",
+    // textAlign: "center",
   },
   inputContainer: {
     flexDirection: "row",
@@ -143,20 +171,31 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     textAlign: "center",
   },
+  herocards: {
+    flex: 1,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    marginTop: 10,
+  },
   card: {
     backgroundColor: "#1c1c1c",
     paddingVertical: 20,
     paddingHorizontal: 10,
     borderRadius: 20,
-    height: 175,
-    width: "100%",
-    marginRight: 12,
+    // height: "80%",
+    width: "32%",
     marginBottom: 20,
   },
   cardTitle: {
     color: "#fff",
     textAlign: "center",
     fontWeight: 400,
-    fontSize: 20,
+    fontSize: 15,
+  },
+  image: {
+    height: 50,
+    aspectRatio: 1,
+    alignSelf: "center",
   },
 });

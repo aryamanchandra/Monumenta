@@ -10,9 +10,10 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { auth, db } from "../../firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import Icons from "react-native-vector-icons/FontAwesome5";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Home = () => {
   const [email, setEmail] = useState("");
@@ -51,12 +52,42 @@ const Home = () => {
     }
 
     const fetchData = async () => {
-      const docRef = doc(db, "User-Data", user.email);
       try {
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setUser(data);
+        const cachedData = await AsyncStorage.getItem("user-monuments");
+        // cachedData = false;
+        if (cachedData) {
+          const parsedCachedData = JSON.parse(cachedData);
+          setUser(parsedCachedData.user);
+          setMonument(parsedCachedData.monuments);
+        } else {
+          const docRef = await doc(db, "User-Data", user.email);
+
+          try {
+            const docSnap = await getDoc(docRef);
+            const querySnapshot = await getDocs(collection(db, "Monuments"));
+            const newMonumentsData = [];
+            querySnapshot.forEach((doc) => {
+              newMonumentsData.push(doc.id);
+            });
+
+            if (docSnap.exists()) {
+              const data = docSnap.data();
+              setUser(data);
+              setMonument(newMonumentsData);
+
+              const cachedDataObject = {
+                user: data,
+                monuments: newMonumentsData,
+              };
+
+              await AsyncStorage.setItem(
+                "user-monuments",
+                JSON.stringify(cachedDataObject)
+              );
+            }
+          } catch (e) {
+            console.log(e);
+          }
         }
       } catch (e) {
         console.log(e);
@@ -95,7 +126,9 @@ const Home = () => {
       <ScrollView>
         <Text style={styles.title}>
           Hi, {"\n"}
-          <Text style={{ textTransform: "capitalize" }}>{userinfo.firstname} </Text>
+          <Text style={{ textTransform: "capitalize" }}>
+            {userinfo.firstname}{" "}
+          </Text>
         </Text>
         <ScrollView
           horizontal
@@ -114,13 +147,13 @@ const Home = () => {
             </TouchableOpacity>
           ))}
         </ScrollView>
-        {(!userinfo.location) ? (
+        {!userinfo.location ? (
           <View>
             <View style={styles.header}>
               <Text style={styles.subTitle}>Monuments to explore</Text>
               <TouchableOpacity
                 style={styles.seemoreheader}
-                onPress={() => handleGeneral()}
+                onPress={handleGeneral}
               >
                 <Text style={styles.seemore}>See More</Text>
                 <Icons name="angle-right" style={styles.icon1} />
@@ -269,6 +302,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   card: {
+    flex:1,
     backgroundColor: "#1c1c1c",
     paddingVertical: 20,
     paddingHorizontal: 10,
@@ -317,13 +351,15 @@ const styles = StyleSheet.create({
   },
   secondarycard: {
     backgroundColor: "#000",
+    // flex:1,
+    // alignItems: "flex-start",
     // paddingVertical: 20,
     // paddingHorizontal: 10,
     borderRadius: 20,
-    height: 100,
+    // height: 100,
     width: 100,
     marginRight: 12,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignContent: "center",
   },
   secondarycardTitle: {
